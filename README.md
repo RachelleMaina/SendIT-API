@@ -1,7 +1,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/RachelleMaina/SendIT/badge.svg?branch=ch-update-endpoints-161859459)](https://coveralls.io/github/RachelleMaina/SendIT?branch=ch-update-endpoints-161859459)  [![Build Status](https://travis-ci.org/RachelleMaina/SendIT.svg?branch=ch-update-endpoints-161859459)](https://travis-ci.org/RachelleMaina/SendIT)  [![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/codeclimate/codeclimate/test_coverage)
 
-# Project Title
-SENDIT
+# SENDIT
+
 This is the API backend of SendIT, a courier service that helps users deliver parcels to different destinations. SendIT
 provides courier quotes based on weight categories.
 
