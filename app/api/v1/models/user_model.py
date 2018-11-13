@@ -9,20 +9,15 @@ class UserModel(object):
         self.orders = orders
         self.users = users
 
-
-
-    def create_order(self, pickup_location, destination, weight, quote, status):
-        """"Method to create a parcel order deliveries."""
-
+    def create_user(self, username, password, phone, email):
+        """Method to create a user"""
         payload = {
-            "order_id": len(self.orders) + 1,
-            "user_id": len(self.users) + 1,
-            "pickup_location": pickup_location,
-            "destination": destination,
-            "weight": weight,
-            "quote": quote,
-            "status": status
+            "user_id": len(self.orders) + 1,
+            "username": username,
+            "password": password,
+            "phone": phone,
+            "email": email
         }
-        self.orders.append(payload)
+        self.users.append(payload)
 
  
