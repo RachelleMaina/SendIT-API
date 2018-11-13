@@ -22,4 +22,23 @@ class AllOrders(Resource, AdminModel):
             }), 404)
 
 
+class OneOrder(Resource, AdminModel):
+    """"Class to handle one parcel order delivery views."""
+
+    def get(self, parcelId):
+        """"Http method to get one parcel order delivery."""
+
+        order = self.get_one_order(parcelId)
+        if order is not None:
+            return make_response(jsonify(
+                {
+                    "status": "Ok",
+                    "Order": order
+                }), 200)
+
+        return make_response(jsonify(
+            {
+                "status": "Not Found"
+            }), 404)
+
 
