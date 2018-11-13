@@ -1,7 +1,5 @@
-orders = [{"order_id": 101, "user_id": 1, "pickup_location": "Nairobi",
-          "destination": "Kisumu", "weight": 20, "quote": 2000, "status": "in transit"}]
-users = [{"user_id": 201, "username": "Rachel", "password": "root",
-         "phone": 712345123, "email": "rachel@gmail.com"}]
+orders = []
+users = []
 
 
 class UserModel(object):
