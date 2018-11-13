@@ -31,3 +31,8 @@ class AdminModel(object):
         """Method to fetch all users."""
         return self.users
 
+    def get_one_user(self, userId):
+        """Method to fetch one user."""
+        new_user = next((user for user in self.users if user[
+            "user_id"] == userId), None)
+        return new_user

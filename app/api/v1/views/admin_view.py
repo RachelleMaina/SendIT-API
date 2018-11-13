@@ -77,3 +77,18 @@ class AllUsers(Resource, AdminModel):
 
 
 
+class OneUser(Resource, AdminModel):
+    """Class handle a single user."""
+
+    def get(self, userId):
+        """method to fetch a single user."""
+        user = self.get_one_user(userId)
+        if user is not None:
+            return make_response(jsonify({
+                "status": "Ok",
+                "User": user
+            }), 200)
+
+        return make_response(jsonify({
+            "status": "Not Found"
+        }), 404)
