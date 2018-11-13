@@ -20,4 +20,11 @@ class AdminModel(object):
                           if order["order_id"] == parcelId), None)
         return new_order
 
-   
+    def get_all_orders_by_user(self, userId):
+        """"Method to fetch all parcel order deliveries by a specific user."""
+
+        new_order = next((order for order in self.orders if order[
+            "user_id"] == userId), None)
+        return new_order
+
+    
