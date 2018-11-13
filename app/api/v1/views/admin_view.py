@@ -60,3 +60,20 @@ class AllOrdersByUser(Resource, AdminModel):
         }), 404)
 
 
+class AllUsers(Resource, AdminModel):
+    """Class to handle all users."""
+
+    def get(self):
+        """Method to return all users"""
+        user = self.get_all_users()
+        if user is not None:
+            return make_response(jsonify({
+                "status": "Ok",
+                "User": user
+            }), 200)
+        return make_response(jsonify({
+            "status": "Not Found"
+            }), 404)
+
+
+

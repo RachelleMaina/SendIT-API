@@ -27,4 +27,7 @@ class AdminModel(object):
             "user_id"] == userId), None)
         return new_order
 
-    
+    def get_all_users(self):
+        """Method to fetch all users."""
+        return self.users
+
