@@ -15,11 +15,11 @@ class CreateOrder(Resource, OrderModel):
         if 'destination' not in data:
             abort(make_response(jsonify(message="Missing destination"), 400))
         if 'weight' not in data:
-            abort(make_response(jsonify(message="weight"), 400))
+            abort(make_response(jsonify(message="Missing weight"), 400))
         if 'quote' not in data:
-            abort(make_response(jsonify(message="quote"), 400))
+            abort(make_response(jsonify(message="Missing quote"), 400))
         if 'status' not in data:
-            abort(make_response(jsonify(message="status"), 400))
+            abort(make_response(jsonify(message="Missing status"), 400))
         if len(data) == 0:
             abort(make_response(jsonify(message="Fields are empty"), 400))
         if len(data) >5:
@@ -35,7 +35,7 @@ class CreateOrder(Resource, OrderModel):
         )
 
         return make_response(jsonify({
-            "status": "Created",
+            "status": "Created", "Order": order
         }), 201)
 
 class AllOrders(Resource, OrderModel):
@@ -129,41 +129,6 @@ class OneUser(Resource, OrderModel):
         }), 404)
 
 
-class CreateOrder(Resource, OrderModel):
-    """"Class to handle  create parcel order deliveries."""
-
-    def post(self):
-        """"Http method to create parcel order deliveries."""
-        data = request.get_json() or {}
-
-        if 'pickup_location' not in data:
-            abort(make_response(jsonify(message="Missing pickup_location"), 400))
-        if 'destination' not in data:
-            abort(make_response(jsonify(message="Missing destination"), 400))
-        if 'weight' not in data:
-            abort(make_response(jsonify(message="weight"), 400))
-        if 'quote' not in data:
-            abort(make_response(jsonify(message="quote"), 400))
-        if 'status' not in data:
-            abort(make_response(jsonify(message="status"), 400))
-        if len(data) == 0:
-            abort(make_response(jsonify(message="Fields are empty"), 400))
-        if len(data) >5:
-            abort(make_response(jsonify(message="Unwanted field given"), 400))
-
-        order = self.create_order(
-            pickup_location=data["pickup_location"],
-            destination=data["destination"],
-            weight=data["weight"],
-            quote=data["quote"],
-            status=data["status"]
-
-        )
-
-        return make_response(jsonify({
-            "status": "Created", "Order": order
-        }), 201)
-
 
 class CancelOrder(Resource, OrderModel):
     """"Class to handle cancel parcel order deliveries."""
@@ -175,12 +140,11 @@ class CancelOrder(Resource, OrderModel):
             return make_response(jsonify(
                 {
                     "Status": "Order Cancelled", "Order": order
-
                 }), 200)
 
         return make_response(jsonify(
             {
-                "status": "Not Found"
+                "Status": "Not Found"
             }), 404)
 
 
@@ -192,13 +156,13 @@ class CreateUser(Resource, OrderModel):
         data = request.get_json() or {}
 
         if 'username' not in data:
-            abort(make_response(jsonify(message="username"), 400))
+            abort(make_response(jsonify(message="Missing username"), 400))
         if 'password' not in data:
-            abort(make_response(jsonify(message="password"), 400))
+            abort(make_response(jsonify(message="Missing password"), 400))
         if 'phone' not in data:
-            abort(make_response(jsonify(message="email"), 400))
+            abort(make_response(jsonify(message="Missing Phone"), 400))
         if 'email' not in data:
-            abort(make_response(jsonify(message="email"), 400))
+            abort(make_response(jsonify(message="Missing email"), 400))
         if len(data) == 0:
             abort(make_response(jsonify(message="Fields are empty"), 400))
         if len(data) >4:

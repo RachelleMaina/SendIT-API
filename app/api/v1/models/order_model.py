@@ -21,7 +21,7 @@ class OrderModel(object):
     def get_all_orders_by_user(self, userId):
         """"Method to fetch all parcel order deliveries by a specific user."""
 
-        new_order = next((order for order in sOrderModel.orders if order[
+        new_order = next((order for order in OrderModel.orders if order[
             "user_id"] == userId), None)
         return new_order
 
@@ -65,7 +65,9 @@ class OrderModel(object):
 
     def cancel_order(self, parcelId):
         """"Method to cancel a parcel order delivery."""
-        new_order = next((order for order in OrderModel.orders if order[
-            "order_id"] == parcelId), None)
-        new_order["status"] = "cancelled"
-        return new_order
+        for order in OrderModel.orders:
+            if order["order_id"] == parcelId:
+               order["status"] = "Cancelled"
+            return None
+
+ 
