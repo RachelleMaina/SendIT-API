@@ -1,7 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api, Resource
-from .views.admin_view import AllOrders, OneOrder, AllOrdersByUser, AllUsers, OneUser
-from .views.user_view import CreateOrder, CancelOrder, CreateUser
+from .views.order_view import AllOrders, OneOrder, AllOrdersByUser, AllUsers, OneUser, CreateOrder, CancelOrder, CreateUser
 
 version1_blueprint = Blueprint('apiv1', __name__)
 api = Api(version1_blueprint)

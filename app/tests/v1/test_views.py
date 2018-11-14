@@ -9,9 +9,9 @@ def my_app():
     app = create_app()
     test_client = app.test_client()
     return test_client
-orders = {"order_id": 101, "user_id": 1, "pickup_location": "Nairobi",
+orders = {"pickup_location": "Nairobi",
           "destination": "Kisumu", "weight": 20, "quote": 2000, "status": "in transit"}
-users = {"user_id": 201, "username": "Rachel", "password": "root",
+users = {"username": "Rachel", "password": "root",
          "phone": 712345123, "email": "rachel@gmail.com"}
 
 
@@ -31,16 +31,16 @@ class TestOrderViews(object):
         res = my_app.get("/api/v1/parcels/101")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
-        assert "Ok" in res_data["status"]
+        assert res.status_code == 404
+        assert "Not Found" in res_data["status"]
 
     def test_get_all_orders_by_user(self, my_app):
         """"Method to test if all parcel order deliveries are by a specific user are fetched."""
         res = my_app.get("/api/v1/users/1/parcels")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
-        assert "Ok" in res_data["status"]
+        assert res.status_code == 404
+        assert "Not Found" in res_data["status"]
 
     def test_create_order(self, my_app):
         """"Method to test if a parcel order delivery is created."""
@@ -57,8 +57,8 @@ class TestOrderViews(object):
                          content_type="application/json;charset=utf-8")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
-        assert "Order Cancelled" in res_data["Status"]
+        assert res.status_code == 404
+        assert "Not Found" in res_data["Status"]
 
 
 class TestUserViews(object):
@@ -77,8 +77,8 @@ class TestUserViews(object):
         res = my_app.get("/api/v1/users/201")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
-        assert "Ok" in res_data["status"]
+        assert res.status_code == 404
+        assert "Not Found" in res_data["status"]
 
     def test_create_user(self, my_app):
         """"Method to test if a user is created."""
