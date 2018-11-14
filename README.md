@@ -10,7 +10,7 @@ provides courier quotes based on weight categories.
 1. `git clone https://github.com/RachelleMaina/SendIT.git`
 2. Set up and activate a virtual environment on SendIT/backend/ folder with the commamnd `virtualenv venv`
 3. ctivate the virtual environment with `source venv/bin/activate`
-4. Install flask, flask_resful and pytest with `pip install flask`, `pip install flask_restful` and `pip install pytest`
+4. Install flask, flask_resful and pytest with ` pip install -r requirements.txt`
 3. To run tests, use the command `pytest`
 4. To run the application, Export flask with the command `FLASK_APP=run.py`
 5. Then Run flask with the command `flask run`
