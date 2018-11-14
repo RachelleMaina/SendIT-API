@@ -1,6 +1,4 @@
 
-
-
 class OrderModel(object):
     """"Class to handle admin models."""
     orders = []
@@ -20,9 +18,10 @@ class OrderModel(object):
 
     def get_all_orders_by_user(self, userId):
         """"Method to fetch all parcel order deliveries by a specific user."""
-
-        new_order = next((order for order in OrderModel.orders if order[
-            "user_id"] == userId), None)
+        new_order = [order for order in OrderModel.orders if order[
+            "user_id"] == userId]
+        if len(new_order) == 0:
+            return None
         return new_order
 
     def get_all_users(self):
@@ -46,7 +45,7 @@ class OrderModel(object):
             "email": email
         }
         OrderModel.users.append(payload)
-        return OrderModel.users
+        return payload
 
     def create_order(self, pickup_location, destination, weight, quote, status):
         """"Method to create a parcel order deliveries."""
@@ -61,13 +60,13 @@ class OrderModel(object):
             "status": status
         }
         OrderModel.orders.append(payload)
-        return OrderModel.orders
+        return payload
 
     def cancel_order(self, parcelId):
         """"Method to cancel a parcel order delivery."""
-        for order in OrderModel.orders:
-            if order["order_id"] == parcelId:
-               order["status"] = "Cancelled"
-            return None
+        new_order = next((order for order in OrderModel.orders if order[
+            "order_id"] == parcelId), None)
+        new_order["status"] = "Cancelled"
+        return new_order
 
  
