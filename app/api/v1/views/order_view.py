@@ -35,7 +35,7 @@ class CreateOrder(Resource, OrderModel):
         )
 
         return make_response(jsonify({
-            "status": "Created", "Order": order
+            "status": "Order Created", "Order": order
         }), 201)
 
 class AllOrders(Resource, OrderModel):
@@ -47,13 +47,13 @@ class AllOrders(Resource, OrderModel):
         if order is not None:
             return make_response(jsonify(
                 {
-                    "status": "Ok",
+                    "status": "All Orders",
                     "Order": order
                 }), 200)
 
         return make_response(jsonify(
             {
-                "status": "Not Found"
+                "status": "No Orders Found"
             }), 404)
 
 
@@ -64,16 +64,18 @@ class OneOrder(Resource, OrderModel):
         """"Http method to get one parcel order delivery."""
 
         order = self.get_one_order(parcelId)
+        status = "Order with id " +  str(parcelId)
+        err = "Order with id " + str(parcelId) + " Not Found"
         if order is not None:
             return make_response(jsonify(
                 {
-                    "status": "Ok",
+                    "status": status,
                     "Order": order
                 }), 200)
 
         return make_response(jsonify(
             {
-                "status": "Not Found"
+                "status": err
             }), 404)
 
 
@@ -84,14 +86,16 @@ class AllOrdersByUser(Resource, OrderModel):
         """"Http method to get all parcel order deliveries by a specific user."""
 
         order = self.get_all_orders_by_user(userId)
+        status = "All orders by User with id " + str(userId)
+        err = "User with id " + str(userId) +" Not Found"
         if order is not None:
             return make_response(jsonify({
-                "status": "Ok",
+                "status": status,
                 "Order": order
             }), 200)
 
         return make_response(jsonify({
-            "status": "Not Found"
+            "status": str(err)
         }), 404)
 
 
@@ -103,7 +107,7 @@ class AllUsers(Resource, OrderModel):
         user = self.get_all_users()
         if user is not None:
             return make_response(jsonify({
-                "status": "Ok",
+                "status": "All users",
                 "User": user
             }), 200)
         return make_response(jsonify({
@@ -118,14 +122,16 @@ class OneUser(Resource, OrderModel):
     def get(self, userId):
         """method to fetch a single user."""
         user = self.get_one_user(userId)
+        status = "User with id " + str(userId)
+        err = "User with id " + str(userId) + " Not Found"
         if user is not None:
             return make_response(jsonify({
-                "status": "Ok",
+                "status": status,
                 "User": user
             }), 200)
 
         return make_response(jsonify({
-            "status": "Not Found"
+            "status": err
         }), 404)
 
 
@@ -136,15 +142,18 @@ class CancelOrder(Resource, OrderModel):
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
         order = self.cancel_order(parcelId)
+        status = "Order with id " + str(parcelId)+ " Cancelled"
+        err = "Order with id " + str(parcelId) + " Not Found"
         if order is not None:
             return make_response(jsonify(
                 {
-                    "Status": "Order Cancelled", "Order": order
+                    "Status": status, 
+                    "Order": order
                 }), 200)
 
         return make_response(jsonify(
             {
-                "Status": "Not Found"
+                "Status": err
             }), 404)
 
 
@@ -176,5 +185,5 @@ class CreateUser(Resource, OrderModel):
             email=data["email"]
         )
         return make_response(jsonify({
-            "status": "Created", "User": user
+            "status": "User Created", "User": user
         }), 201)
