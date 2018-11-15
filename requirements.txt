@@ -6,6 +6,17 @@ Click==7.0
 Flask==1.0.2
 Flask-RESTful==0.3.6
 gunicorn==19.9.0
+blueprint==3.4.2
+certifi==2018.10.15
+chardet==3.0.4
+Click==7.0
+coverage==4.5.1
+coveralls==1.5.1
+docopt==0.6.2
+Flask==1.0.2
+Flask-RESTful==0.3.6
+gunicorn==19.9.0
+idna==2.7
 isort==4.3.4
 itsdangerous==1.1.0
 Jinja2==2.10
@@ -20,5 +31,9 @@ pytest==3.10.0
 pytz==2018.7
 six==1.11.0
 typed-ast==1.1.0
+requests==2.20.0
+six==1.11.0
+typed-ast==1.1.0
+urllib3==1.24.1
 Werkzeug==0.14.1
 wrapt==1.10.11
