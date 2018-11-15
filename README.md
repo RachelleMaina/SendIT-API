@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/RachelleMaina/SendIT/badge.svg?branch=ch-update-endpoints-161859459)](https://coveralls.io/github/RachelleMaina/SendIT?branch=ch-update-endpoints-161859459)  [![Build Status](https://travis-ci.org/RachelleMaina/SendIT.svg?branch=ch-update-endpoints-161859459)](https://travis-ci.org/RachelleMaina/SendIT)  [![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/codeclimate/codeclimate/test_coverage)
+[![Build Status](https://travis-ci.org/RachelleMaina/SendIT-API.svg?branch=bg-fix-api-bugs-161979381)](https://travis-ci.org/RachelleMaina/SendIT-API)
 
 # SENDIT
 
