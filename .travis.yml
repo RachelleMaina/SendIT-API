@@ -15,7 +15,7 @@ script:
 branches:
   only:
   - master
-  - stable
+  - api
 
 after_success:
  - coveralls
