@@ -9,8 +9,8 @@ def my_app():
     app = create_app()
     test_client = app.test_client()
     return test_client
-orders = {"pickup_location": "Nairobi",
-          "destination": "Kisumu", "weight": 20, "quote": 2000, "status": "in transit"}
+orders = {"user_id":1, "pickup_location": "Nairobi",
+          "destination": "Kisumu", "weight": 20, "price": 2000}
 users = {"username": "Rachel", "password": "root",
          "phone": 712345123, "email": "rachel@gmail.com"}
 
@@ -24,7 +24,6 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
         assert res.status_code == 200
-        assert "Ok" in res_data["status"]
 
     def test_get_one_order(self, my_app):
         """"Method to test if one parcel order delivery are fetched."""
@@ -32,7 +31,8 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
         assert res.status_code == 404
-        assert "Not Found" in res_data["status"]
+        assert "Order with given id does not exist" in res_data["Message"]
+
 
     def test_get_all_orders_by_user(self, my_app):
         """"Method to test if all parcel order deliveries are by a specific user are fetched."""
@@ -40,7 +40,6 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
         assert res.status_code == 404
-        assert "Not Found" in res_data["status"]
 
     def test_create_order(self, my_app):
         """"Method to test if a parcel order delivery is created."""
@@ -48,17 +47,16 @@ class TestOrderViews(object):
                           content_type="application/json;charset=utf-8")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 201
-        assert "Created" in res_data["status"]
+        assert res.status_code == 400
 
     def test_cancel_order(self, my_app):
         """"Method to test if a parcel delivery order is cancelled."""
-        res = my_app.put("api/v1/parcels/101/cancel", data=json.dumps(orders),
+        res = my_app.put("api/v1/parcels/1/cancel", data=json.dumps(orders),
                          content_type="application/json;charset=utf-8")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 404
-        assert "Not Found" in res_data["Status"]
+        assert res.status_code == 400
+        assert "Order with given id does not exist" in res_data["Message"]
 
 
 class TestUserViews(object):
@@ -70,15 +68,15 @@ class TestUserViews(object):
 
         res_data = json.loads(res.data.decode())
         assert res.status_code == 200
-        assert "Ok" in res_data["status"]
+        assert "All users" in res_data["Message"]
 
     def test_get_one_user(self, my_app):
         """"Method to test if one user fetched."""
-        res = my_app.get("/api/v1/users/201")
+        res = my_app.get("/api/v1/users/1")
 
         res_data = json.loads(res.data.decode())
         assert res.status_code == 404
-        assert "Not Found" in res_data["status"]
+        assert "User with given id  does not exist" in res_data["Message"]
 
     def test_create_user(self, my_app):
         """"Method to test if a user is created."""
@@ -87,4 +85,4 @@ class TestUserViews(object):
 
         res_data = json.loads(res.data.decode())
         assert res.status_code == 201
-        assert "Created" in res_data["status"]
+        assert "User Signed up" in res_data["Message"]

@@ -1,3 +1,4 @@
+import re
 from flask import request, make_response, jsonify, abort
 from flask_restful import Resource
 from ..models.order_model import OrderModel
@@ -8,35 +9,56 @@ class CreateOrder(Resource, OrderModel):
 
     def post(self):
         """"Http method to create parcel order deliveries."""
-        data = request.get_json() or {}
 
+        data = request.get_json() or {}
+        if 'user_id' not in data:
+            abort(make_response(jsonify(message="Data Supplied Missing user_id"), 400))
         if 'pickup_location' not in data:
-            abort(make_response(jsonify(message="Missing pickup_location"), 400))
+            abort(make_response(jsonify(message="Data Supplied Missing pickup_location"), 400))
         if 'destination' not in data:
-            abort(make_response(jsonify(message="Missing destination"), 400))
+            abort(make_response(jsonify(message="Data Supplied Missing destination"), 400))
         if 'weight' not in data:
-            abort(make_response(jsonify(message="Missing weight"), 400))
-        if 'quote' not in data:
-            abort(make_response(jsonify(message="Missing quote"), 400))
-        if 'status' not in data:
-            abort(make_response(jsonify(message="Missing status"), 400))
+            abort(make_response(jsonify(message="Data Supplied Missing weight"), 400))
+        if 'price' not in data:
+            abort(make_response(jsonify(message="Data Supplied Missing price"), 400))   
         if len(data) == 0:
             abort(make_response(jsonify(message="Fields are empty"), 400))
-        if len(data) >5:
-            abort(make_response(jsonify(message="Unwanted field given"), 400))
+        if len(data) > 5:
+            abort(make_response(jsonify(message="Data Supplied has Unwanted Fields"), 400))
+        
+        user_id = str(data["user_id"])
+        pickup_location = str(data["pickup_location"])
+        destination = str(data["destination"])
+        weight = str(data["weight"])
+        price = str(data["price"])
+
+        if user_id.isdigit() == False:
+            abort(make_response(jsonify(message="user_id should be a number"), 400))
+        if weight.isdigit() == False:
+            abort(make_response(jsonify(message="weight should be a number"), 400))    
+        if price.isdigit() == False:
+            abort(make_response(jsonify(message="price should be a number"), 400)) 
+        if destination.isalpha() == False:
+            abort(make_response(jsonify(message="destination should have letters only"), 400))    
+        if pickup_location.isalpha() == False:
+            abort(make_response(jsonify(message="pickup_location  should have letters only"), 400)) 
+        if self.get_one_user(int(user_id)) is None:
+            abort(make_response(jsonify(message="User with id " + str(user_id) + " does not exist"), 400)) 
+
 
         order = self.create_order(
-            pickup_location=data["pickup_location"],
-            destination=data["destination"],
-            weight=data["weight"],
-            quote=data["quote"],
-            status=data["status"]
+            user_id=int(user_id),
+            pickup_location=pickup_location,
+            destination=destination,
+            weight=int(weight),
+            price=int(price)
 
         )
 
         return make_response(jsonify({
-            "status": "Order Created", "Order": order
+            "Message": "Order Created", "Order": order
         }), 201)
+
 
 class AllOrders(Resource, OrderModel):
     """"Class to handle all parcel order deliveries views."""
@@ -47,13 +69,13 @@ class AllOrders(Resource, OrderModel):
         if order is not None:
             return make_response(jsonify(
                 {
-                    "status": "All Orders",
+                    "Message": "All Orders",
                     "Order": order
                 }), 200)
 
         return make_response(jsonify(
             {
-                "status": "No Orders Found"
+                "Message": "No Orders Found"
             }), 404)
 
 
@@ -62,20 +84,26 @@ class OneOrder(Resource, OrderModel):
 
     def get(self, parcelId):
         """"Http method to get one parcel order delivery."""
+        parcelId = str(parcelId)
+        if parcelId.isdigit():
+            order = self.get_one_order(parcelId)
 
-        order = self.get_one_order(parcelId)
-        status = "Order with id " +  str(parcelId)
-        err = "Order with id " + str(parcelId) + " Not Found"
-        if order is not None:
+            message = "Order with id " + str(parcelId)
+            err = "Order with given id does not exist"
+            if order is not None:
+                return make_response(jsonify(
+                    {
+                        "Message": message,
+                        "Order": order
+                    }), 200)
+
             return make_response(jsonify(
                 {
-                    "status": status,
-                    "Order": order
-                }), 200)
-
+                    "Message": err
+                }), 404)
         return make_response(jsonify(
             {
-                "status": err
+                "Message": "parcelId given is not a number"
             }), 404)
 
 
@@ -84,19 +112,24 @@ class AllOrdersByUser(Resource, OrderModel):
 
     def get(self, userId):
         """"Http method to get all parcel order deliveries by a specific user."""
+        userId = str(userId)
+        if userId.isdigit():
+            order = self.get_all_orders_by_user(userId)
+            message = "All orders by User with id " + str(userId)
+            err = "User with given id does not exist"
+            if order is not None:
+                return make_response(jsonify({
+                    "Message": message,
+                    "Order": order
+                }), 200)
 
-        order = self.get_all_orders_by_user(userId)
-        status = "All orders by User with id " + str(userId)
-        err = "User with id " + str(userId) +" Not Found"
-        if order is not None:
             return make_response(jsonify({
-                "status": status,
-                "Order": order
-            }), 200)
-
-        return make_response(jsonify({
-            "status": str(err)
-        }), 404)
+                "Message": str(err)
+            }), 404)
+        return make_response(jsonify(
+            {
+                "Message": "userId given is not a number"
+            }), 404)
 
 
 class AllUsers(Resource, OrderModel):
@@ -107,33 +140,34 @@ class AllUsers(Resource, OrderModel):
         user = self.get_all_users()
         if user is not None:
             return make_response(jsonify({
-                "status": "All users",
+                "Message": "All users",
                 "User": user
             }), 200)
-        return make_response(jsonify({
-            "status": "Not Found"
-            }), 404)
 
 
 
-class OneUser(Resource, OrderModel):
+class Signin(Resource, OrderModel):
     """Class handle a single user."""
 
     def get(self, userId):
         """method to fetch a single user."""
-        user = self.get_one_user(userId)
-        status = "User with id " + str(userId)
-        err = "User with id " + str(userId) + " Not Found"
-        if user is not None:
+        userId = str(userId)
+        if userId.isdigit():
+            user = self.get_one_user(userId)
+            err = "User with given id  does not exist"
+            if user is not None:
+                return make_response(jsonify({
+                    "Message": "User Signed in",
+                    "User": user
+                }), 200)
+
             return make_response(jsonify({
-                "status": status,
-                "User": user
-            }), 200)
-
-        return make_response(jsonify({
-            "status": err
-        }), 404)
-
+                "Message": err
+            }), 404)
+        return make_response(jsonify(
+            {
+                "Message": "userId given is not a number"
+            }), 404)
 
 
 class CancelOrder(Resource, OrderModel):
@@ -141,23 +175,28 @@ class CancelOrder(Resource, OrderModel):
 
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
+        if self.get_one_order(int(parcelId)) is None:
+            abort(make_response(jsonify({
+                "Message": "Order with given id does not exist"
+
+                }), 400)) 
+
         order = self.cancel_order(parcelId)
-        status = "Order with id " + str(parcelId)+ " Cancelled"
-        err = "Order with id " + str(parcelId) + " Not Found"
+        message = "Order with id " + str(parcelId) + " Cancelled"
         if order is not None:
-            return make_response(jsonify(
-                {
-                    "Status": status, 
-                    "Order": order
-                }), 200)
+                return make_response(jsonify(
+                    {
+                        "Message": message,
+                        "Order": order
+                    }), 200)
 
         return make_response(jsonify(
-            {
-                "Status": err
-            }), 404)
+                {
+                    "Message": "Order with given id does not exist"
+                }), 404)
+   
 
-
-class CreateUser(Resource, OrderModel):
+class Register(Resource, OrderModel):
     """Class to handle user  methods"""
 
     def post(self):
@@ -174,16 +213,25 @@ class CreateUser(Resource, OrderModel):
             abort(make_response(jsonify(message="Missing email"), 400))
         if len(data) == 0:
             abort(make_response(jsonify(message="Fields are empty"), 400))
-        if len(data) >4:
+        if len(data) > 4:
             abort(make_response(jsonify(message="Unwanted Field given"), 400))
+        username = str(data["username"])
+        password=str(data["password"])
+        phone = str(data["phone"])
+        email = str(data["email"])  
+        if phone.isdigit() == False and len(phone)!=10:
+            abort(make_response(jsonify(message="phone should be a number with 10 digits"), 400)) 
+        if not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
+            abort(make_response(jsonify(message="Email given is not valid"), 400)) 
+
 
         data = request.get_json() or {}
         user = self.create_user(
-            username=data["username"],
-            password=data["password"],
-            phone=data["phone"],
-            email=data["email"]
+            username=username,
+            password=password,
+            phone=phone,
+            email=email
         )
         return make_response(jsonify({
-            "status": "User Created", "User": user
+            "Message": "User Signed up", "User": user
         }), 201)
