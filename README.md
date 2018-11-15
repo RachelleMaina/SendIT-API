@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/RachelleMaina/SendIT-API.svg?branch=bg-fix-api-bugs-161979381)](https://travis-ci.org/RachelleMaina/SendIT-API)
+[![Build Status](https://travis-ci.org/RachelleMaina/SendIT-API.svg?branch=api)](https://travis-ci.org/RachelleMaina/SendIT-API) [![Coverage Status](https://coveralls.io/repos/github/RachelleMaina/SendIT-API/badge.svg?branch=api)](https://coveralls.io/github/RachelleMaina/SendIT-API?branch=api)
 
 # SENDIT
 
