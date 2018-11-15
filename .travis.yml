@@ -11,6 +11,11 @@ install:
 
 script:
  - pytest --cov=app/api/tests
+ 
+branches:
+  only:
+  - master
+  - stable
 
 after_success:
  - coveralls
