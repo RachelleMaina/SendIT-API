@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/RachelleMaina/SendIT/badge.svg?branch=ch-update-endpoints-161859459)](https://coveralls.io/github/RachelleMaina/SendIT?branch=ch-update-endpoints-161859459)  [![Build Status](https://travis-ci.org/RachelleMaina/SendIT.svg?branch=ch-update-endpoints-161859459)](https://travis-ci.org/RachelleMaina/SendIT)  [![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/codeclimate/codeclimate/test_coverage)
+[![Build Status](https://travis-ci.org/RachelleMaina/SendIT-API.svg?branch=api)](https://travis-ci.org/RachelleMaina/SendIT-API) [![Coverage Status](https://coveralls.io/repos/github/RachelleMaina/SendIT-API/badge.svg?branch=api)](https://coveralls.io/github/RachelleMaina/SendIT-API?branch=api)
 
 # SENDIT
 
@@ -10,7 +10,7 @@ provides courier quotes based on weight categories.
 1. `git clone https://github.com/RachelleMaina/SendIT.git`
 2. Set up and activate a virtual environment on SendIT/backend/ folder with the commamnd `virtualenv venv`
 3. ctivate the virtual environment with `source venv/bin/activate`
-4. Install flask, flask_resful and pytest with ` pip install -r requirements.txt`
+4. Install flask, flask_resful and pytest with `pip install flask`, `pip install flask_restful` and `pip install pytest`
 3. To run tests, use the command `pytest`
 4. To run the application, Export flask with the command `FLASK_APP=run.py`
 5. Then Run flask with the command `flask run`
@@ -48,7 +48,6 @@ Postman, Git
 
 ### Installing
 install postman from https://www.getpostman.com/apps
-
 install git from https://www.linode.com/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/
 
 
