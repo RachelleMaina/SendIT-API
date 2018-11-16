@@ -4,7 +4,6 @@ class OrderModel(object):
     orders = []
     users = []
 
-
     def get_all_orders(self):
         """"Method to fetch all parcel order deliveries."""
         return OrderModel.orders
@@ -36,7 +35,6 @@ class OrderModel(object):
             "user_id"] == userId), None)
         return new_user
 
-
     def create_user(self, username, password, phone, email):
         """Method to create a user"""
         payload = {
@@ -48,7 +46,6 @@ class OrderModel(object):
         }
         OrderModel.users.append(payload)
         return payload
-
 
     def create_order(self, user_id, pickup_location, destination, weight, price, status="Pending"):
         """"Method to create a parcel order deliveries."""
@@ -72,8 +69,6 @@ class OrderModel(object):
             "order_id"] == parcelId), None)
         if new_order["status"] == "Cancelled":
             message = "Order Already Cancelled"
-        
+
         new_order["status"] = "Cancelled"
         return new_order
-
- 
