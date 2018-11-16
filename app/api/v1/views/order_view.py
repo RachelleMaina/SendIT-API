@@ -1,11 +1,14 @@
 import re
 from flask import request, make_response, jsonify, abort
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from ..models.order_model import OrderModel
 
 
 class CreateOrder(Resource, OrderModel):
     """"Class to handle  create parcel order deliveries."""
+    reqparse = reqparse.RequestParser()
+    reqparse.add_argument('user_id', type = int, required = True,
+            help = 'user id should be interger')
 
     def post(self):
         """"Http method to create parcel order deliveries."""
@@ -13,19 +16,28 @@ class CreateOrder(Resource, OrderModel):
         data = request.get_json() or {}
         if 'user_id' not in data:
             abort(make_response(jsonify(message="Data Supplied Missing user_id"), 400))
+
         if 'pickup_location' not in data:
-            abort(make_response(jsonify(message="Data Supplied Missing pickup_location"), 400))
+            abort(make_response(
+                jsonify(message="Data Supplied Missing pickup_location"), 400))
+
         if 'destination' not in data:
-            abort(make_response(jsonify(message="Data Supplied Missing destination"), 400))
+            abort(make_response(
+                jsonify(message="Data Supplied Missing destination"), 400))
+
         if 'weight' not in data:
             abort(make_response(jsonify(message="Data Supplied Missing weight"), 400))
+
         if 'price' not in data:
-            abort(make_response(jsonify(message="Data Supplied Missing price"), 400))   
+            abort(make_response(jsonify(message="Data Supplied Missing price"), 400))
+
         if len(data) == 0:
             abort(make_response(jsonify(message="Fields are empty"), 400))
+
         if len(data) > 5:
-            abort(make_response(jsonify(message="Data Supplied has Unwanted Fields"), 400))
-        
+            abort(make_response(
+                jsonify(message="Data Supplied has Unwanted Fields"), 400))
+
         user_id = str(data["user_id"])
         pickup_location = str(data["pickup_location"])
         destination = str(data["destination"])
@@ -34,17 +46,24 @@ class CreateOrder(Resource, OrderModel):
 
         if user_id.isdigit() == False:
             abort(make_response(jsonify(message="user_id should be a number"), 400))
-        if weight.isdigit() == False:
-            abort(make_response(jsonify(message="weight should be a number"), 400))    
-        if price.isdigit() == False:
-            abort(make_response(jsonify(message="price should be a number"), 400)) 
-        if destination.isalpha() == False:
-            abort(make_response(jsonify(message="destination should have letters only"), 400))    
-        if pickup_location.isalpha() == False:
-            abort(make_response(jsonify(message="pickup_location  should have letters only"), 400)) 
-        if self.get_one_user(int(user_id)) is None:
-            abort(make_response(jsonify(message="User with id " + str(user_id) + " does not exist"), 400)) 
 
+        if weight.isdigit() == False:
+            abort(make_response(jsonify(message="weight should be a number"), 400))
+
+        if price.isdigit() == False:
+            abort(make_response(jsonify(message="price should be a number"), 400))
+
+        if not re.match("^[a-zA-Z _-]*$", destination):
+            abort(make_response(
+                jsonify(message="destination should have letters, spaces, _ and - only"), 400))
+
+        if not re.match("^[a-zA-Z _-]*$", pickup_location):
+            abort(make_response(jsonify(
+                message="pickup_location should have letters, spaces, _ and - only"), 400))
+
+        if self.get_one_user(int(user_id)) is None:
+            abort(make_response(jsonify(message="User with id " +
+                                        str(user_id) + " does not exist"), 400))
 
         order = self.create_order(
             user_id=int(user_id),
@@ -138,12 +157,10 @@ class AllUsers(Resource, OrderModel):
     def get(self):
         """Method to return all users"""
         user = self.get_all_users()
-        if user is not None:
-            return make_response(jsonify({
-                "Message": "All users",
-                "User": user
-            }), 200)
-
+        return make_response(jsonify({
+            "Message": "All users",
+            "User": user
+        }), 200)
 
 
 class Signin(Resource, OrderModel):
@@ -175,26 +192,30 @@ class CancelOrder(Resource, OrderModel):
 
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
+        parcelId = str(parcelId)
+        if parcelId.isdigit() == False:
+            abort(make_response(jsonify(message="parcelId should be a number"), 400))
+
         if self.get_one_order(int(parcelId)) is None:
             abort(make_response(jsonify({
                 "Message": "Order with given id does not exist"
 
-                }), 400)) 
+            }), 400))
 
         order = self.cancel_order(parcelId)
         message = "Order with id " + str(parcelId) + " Cancelled"
         if order is not None:
-                return make_response(jsonify(
-                    {
-                        "Message": message,
-                        "Order": order
-                    }), 200)
+            return make_response(jsonify(
+                {
+                    "Message": message,
+                    "Order": order
+                }), 200)
 
         return make_response(jsonify(
-                {
-                    "Message": "Order with given id does not exist"
-                }), 404)
-   
+            {
+                "Message": "Order with given id does not exist"
+            }), 404)
+
 
 class Register(Resource, OrderModel):
     """Class to handle user  methods"""
@@ -205,25 +226,41 @@ class Register(Resource, OrderModel):
 
         if 'username' not in data:
             abort(make_response(jsonify(message="Missing username"), 400))
+
         if 'password' not in data:
             abort(make_response(jsonify(message="Missing password"), 400))
+
         if 'phone' not in data:
             abort(make_response(jsonify(message="Missing Phone"), 400))
+
         if 'email' not in data:
             abort(make_response(jsonify(message="Missing email"), 400))
+
         if len(data) == 0:
             abort(make_response(jsonify(message="Fields are empty"), 400))
+
         if len(data) > 4:
             abort(make_response(jsonify(message="Unwanted Field given"), 400))
-        username = str(data["username"])
-        password=str(data["password"])
-        phone = str(data["phone"])
-        email = str(data["email"])  
-        if phone.isdigit() == False and len(phone)!=10:
-            abort(make_response(jsonify(message="phone should be a number with 10 digits"), 400)) 
-        if not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
-            abort(make_response(jsonify(message="Email given is not valid"), 400)) 
 
+        username = str(data["username"])
+        password = str(data["password"])
+        phone = str(data["phone"]).zfill(10)
+        email = str(data["email"])
+
+        if not re.match("^[0-9]*$", phone) and len(phone) != 10:
+            abort(make_response(
+                jsonify(message="phone should be a number with 10 digits"), 400))
+
+        if not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
+            abort(make_response(jsonify(message="Email given is not valid"), 400))
+
+        if not re.match("^[a-zA-Z0-9 _-]*$", password):
+            abort(make_response(
+                jsonify(message="password should have letters,numbers, spaces, _ and - only"), 400))
+
+        if not re.match("^[a-zA-Z _-]*$", username):
+            abort(make_response(
+                jsonify(message="username should have letters, spaces, _ and - only"), 400))
 
         data = request.get_json() or {}
         user = self.create_user(
