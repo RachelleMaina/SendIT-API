@@ -1,6 +1,6 @@
 import re
 from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
+                                jwt_required, get_jwt_identity, get_raw_jwt)
 from flask import request, make_response, jsonify, abort
 from flask_restful import Resource, reqparse
 from ..models.users_model import UsersModel
@@ -23,11 +23,9 @@ class Login(Resource, UsersModel):
         try:
             user = self.login(username, password)
             access_token = create_access_token(identity = username)
-            refresh_token = create_refresh_token(identity = password)
             return make_response(jsonify({
                 "Message": "Signed in as " + user["role"],
-                'access_token': access_token,
-                'refresh_token': refresh_token
+                'access_token': access_token
             }), 200)
 
         except:
@@ -72,9 +70,4 @@ class Register(Resource, UsersModel):
 
 
 
-class TokenRefresh(Resource):
-    @jwt_refresh_token_required
-    def post(self):
-        user = get_jwt_identity()
-        access_token = create_access_token(identity = user)
-        return {'access_token': access_token}
+

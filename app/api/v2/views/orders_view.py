@@ -1,4 +1,6 @@
 import re
+from flask_jwt_extended import (create_access_token,
+                                jwt_required, get_jwt_identity, get_raw_jwt, jwt_required)
 from flask import request, make_response, jsonify, abort
 from flask_restful import Resource, reqparse
 from ..models.orders_model import OrdersModel
@@ -31,12 +33,10 @@ class CreateOrder(Resource, OrdersModel):
             abort(make_response(
                 jsonify(message="user_id and weight should be a number"), 400))
 
-        # if not re.match("^[a-zA-Z _-]*$", destination) or  re.match("^[a-zA-Z _-]*$", pickup_location):
-        #     abort(make_response(
-        #         jsonify(message="destination should have letters, spaces, _ and - only"), 400))
+
         user = UsersModel()
 
-        if user.get_one_user(int(user_id)) is None:
+        if user.user_by_id(int(user_id)) is None:
             abort(make_response(jsonify(message="User with id " +
                                         str(user_id) + " does not exist"), 400))
 
@@ -50,18 +50,27 @@ class CreateOrder(Resource, OrdersModel):
 
 class AllOrdersinApplication(Resource, OrdersModel):
     """"Class to handle all parcel order deliveries views."""
-
+    @jwt_required
     def get(self):
         """"Http method to get all parcel order deliveries."""
-        order = self.get_all_orders()
-        if order is not None:
+        username = get_jwt_identity()
+        user = UsersModel()
+        user_role=user.user_by_username(username)
+        if user_role["role"] == "Admin":
+
+            order = self.get_all_orders()
+            if order is not None:
+                return make_response(jsonify(
+                    {
+                        "Message": "All Parcel Orders",
+                        "Order": order
+                    }), 200)
+
             return make_response(jsonify(
                 {
-                    "Message": "All Parcel Orders",
-                    "Order": order
-                }), 200)
-
+                    "Message": "No Orders Found"
+                }), 404)
         return make_response(jsonify(
-            {
-                "Message": "No Orders Found"
-            }), 404)
+                {
+                    "Message": "Method not allowed for this user"
+                }), 404)
