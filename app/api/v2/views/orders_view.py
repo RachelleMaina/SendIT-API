@@ -74,3 +74,41 @@ class AllOrdersinApplication(Resource, OrdersModel):
                 {
                     "Message": "Method not allowed for this user"
                 }), 404)
+
+
+class ChangeStatus(Resource, OrdersModel):
+    """"Class to handle cancel parcel order deliveries."""
+    @jwt_required
+    def put(self, parcelId):
+        """"Http method to cancel a parcel order delivery."""
+        username = get_jwt_identity()
+        user = UsersModel()
+        user_role=user.user_by_username(username)
+        if user_role["role"] == "Admin":
+            parser = reqparse.RequestParser()
+            parser.add_argument(
+                'status', help='status cannot be blank', required=True)
+            data = parser.parse_args()
+            status = data["status"]
+            parcelId = str(parcelId)
+            if parcelId.isdigit() == False:
+                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+
+            if self.get_one_order(int(parcelId)) is None:
+                abort(make_response(jsonify({
+                    "Message": "Order with given id does not exist"
+
+                }), 400))
+
+            order = self.cancel_order(status, parcelId)
+            
+            return make_response(jsonify(
+                    {
+                        "Message": "Order with id " + str(parcelId) + " Cancelled"
+                        
+                    }), 200)
+        return make_response(jsonify(
+                {
+                    "Message": "Method not allowed for this user"
+                }), 404)
+

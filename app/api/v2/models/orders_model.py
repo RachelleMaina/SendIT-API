@@ -41,7 +41,32 @@ class OrdersModel(object):
         if cur.rowcount >= 1:
             resp = self.serialize_order(all_orders)
             return resp
-
+        self.db.close()
         return None
 
+        
+
+    def get_one_order(self, parcelId):
+        """"Method to fetch one parcel order delivery"""
+
+        self.db = db_init()
+        cur = self.db.cursor()
+        cur.execute("""SELECT user_id, user_id, pickup_location, destination, weight, price, status, date_created  FROM orders WHERE order_id = %s""", (parcelId, ))
+        all_orders= cur.fetchone()
+
         self.db.close()
+        return cur.rowcount
+        
+        
+
+
+    def cancel_order(self, status, parcelId):
+        """"Method to cancel a parcel order delivery."""
+
+        cur = self.db.cursor()
+        query = """UPDATE orders set status = %s where order_id = %s """
+        data = (status, parcelId)
+        cur.execute(query, data)
+        self.db.commit()
+        self.db.close()
+       
