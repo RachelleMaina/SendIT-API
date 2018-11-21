@@ -58,13 +58,27 @@ class UsersModel(object):
     
         self.db.close()
 
-    def get_one_user(self, userId):
+    def user_by_id(self, userId):
         """Method to fetch one user."""
 
         cur = self.db.cursor()
         cur.execute(
             """SELECT user_id, username, password, phone, email, role, date_created 
             FROM users WHERE user_id = %s""", (userId, ))
+        
+        user_from_db = cur.fetchone()
+        if cur.rowcount == 1: 
+            resp = self.serialize_user(user_from_db)                     
+            return resp
+        return None
+
+    def user_by_username(self, username):
+        """Method to fetch one user."""
+
+        cur = self.db.cursor()
+        cur.execute(
+            """SELECT user_id, username, password, phone, email, role, date_created 
+            FROM users WHERE username = %s""", (username, ))
         
         user_from_db = cur.fetchone()
         if cur.rowcount == 1: 
