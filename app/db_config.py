@@ -41,10 +41,10 @@ def destroy_tables():
 def tables():
     users = """CREATE TABLE IF NOT EXISTS users(
         user_id serial PRIMARY KEY NOT NULL,
-        username varchar(50)  NOT NULL,
-        password varchar(50) NOT NULL,
-        phone varchar(50) NOT NULL,
-        email varchar(50) NOT NULL,
+        username varchar(50) UNIQUE NOT NULL,
+        password varchar(200) NOT NULL,
+        phone varchar(50) UNIQUE NOT NULL,
+        email varchar(50) UNIQUE NOT NULL,
         role varchar(50) NOT NULL DEFAULT 'User',
         date_created timestamp with time zone DEFAULT ('now'::text)::date
     );"""
