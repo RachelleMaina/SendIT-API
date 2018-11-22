@@ -95,5 +95,17 @@ class OrdersModel(object):
         cur.execute(query, data)
         self.db.commit()
         self.db.close()
+        
+    def change_destination(self, user_id, destination, parcelId):
+        """"Method to change status of  a parcel order delivery."""
+
+        cur = self.db.cursor()
+        query = """UPDATE orders set destination = %s where user_id = %s and order_id = %s """
+        data = (destination, user_id, parcelId)
+        cur.execute(query, data)
+        self.db.commit()
+        self.db.close()
+
+ 
 
        
