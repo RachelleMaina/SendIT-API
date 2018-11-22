@@ -100,7 +100,7 @@ class ChangeStatus(Resource, OrdersModel):
 
                 }), 400))
 
-            order = self.cancel_order(status, parcelId)
+            order = self.change_status(status, parcelId)
             
             return make_response(jsonify(
                     {
@@ -112,3 +112,27 @@ class ChangeStatus(Resource, OrdersModel):
                     "Message": "Method not allowed for this user"
                 }), 404)
 
+
+class AllOrdersByUser(Resource, OrdersModel):
+    """"Class to handle all parcel order deliveries by a specific user views."""
+    @jwt_required
+    def get(self):
+        """"Http method to get all parcel order deliveries by a specific user."""
+        username = get_jwt_identity()
+        user = UsersModel()
+        user_data=user.user_by_username(username)
+        
+        userId = user_data["user_id"]
+        
+        order = self.get_all_orders_by_user(userId)
+        if order is not None:
+            return make_response(jsonify({
+                "Message": "All orders by User with id " + str(userId),
+                "Order": order
+            }), 200)
+
+        return make_response(jsonify({
+            "Message": "No parcel orders found"
+        }), 404)
+      
+      
