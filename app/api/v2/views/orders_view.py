@@ -104,7 +104,7 @@ class ChangeStatus(Resource, OrdersModel):
             
             return make_response(jsonify(
                     {
-                        "Message": "Order with id " + str(parcelId) + " Cancelled"
+                        "Message": "Status of Order with id " + str(parcelId) + " Changed"
                         
                     }), 200)
         return make_response(jsonify(
@@ -135,4 +135,75 @@ class AllOrdersByUser(Resource, OrdersModel):
             "Message": "No parcel orders found"
         }), 404)
       
-      
+class ChangeLocation(Resource, OrdersModel):
+    """"Class to  change location of  parcel order deliveries."""
+    @jwt_required
+    def put(self, parcelId):
+        """"Http method to cancel a parcel order delivery."""
+        username = get_jwt_identity()
+        user = UsersModel()
+        user_role=user.user_by_username(username)
+        if user_role["role"] == "Admin":
+            parser = reqparse.RequestParser()
+            parser.add_argument(
+                'current_location', help='current_location cannot be blank', required=True)
+            data = parser.parse_args()
+            current_location = data["current_location"]
+            parcelId = str(parcelId)
+            if parcelId.isdigit() == False:
+                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+
+            if self.get_one_order(int(parcelId)) is None:
+                abort(make_response(jsonify({
+                    "Message": "Order with given id does not exist"
+
+                }), 400))
+
+            order = self.change_location(current_location, parcelId)
+            
+            return make_response(jsonify(
+                    {
+                        "Message": "Destination of Order with id " + str(parcelId) + " Changed"
+                        
+                    }), 200)
+        return make_response(jsonify(
+                {
+                    "Message": "Method not allowed for this user"
+                }), 404)
+class ChangeDestination(Resource, OrdersModel):
+    """"Class to handle cancel parcel order deliveries."""
+    @jwt_required
+    def put(self, parcelId):
+        """"Http method to cancel a parcel order delivery."""
+        username = get_jwt_identity()
+        user = UsersModel()
+        user_role = user.user_by_username(username)
+        user_id = user_role["user_id"]
+        
+        if user_role["role"] == "User":
+            parser = reqparse.RequestParser()
+            parser.add_argument(
+                'destination', help='destination cannot be blank', required=True)
+            data = parser.parse_args()
+            destination = data["destination"]
+            parcelId = str(parcelId)
+            if parcelId.isdigit() == False:
+                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+
+            if self.order_by_id(int(parcelId)) is None:
+                abort(make_response(jsonify({
+                    "Message": "Parcel Order with given id does not exist"
+
+                }), 400))
+
+            order = self.change_destination(user_id, destination, parcelId)
+            
+            return make_response(jsonify(
+                    {
+                        "Message": "Destination of parcel order with id " + str(parcelId) + " changed successfully"
+                        
+                    }), 200)
+        return make_response(jsonify(
+                {
+                    "Message": "Method not allowed for this user"
+                }), 404)
