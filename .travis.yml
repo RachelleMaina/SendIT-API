@@ -9,6 +9,14 @@ install:
  - pip install pytest-cov
  - pip install coveralls
 
+services:
+  - postgres
+
+before_script:
+- psql -c 'create database sendit_test;' -U postgres
+- export DB_URL="dbname='sendit_test' host='localhost' port='5432' user='postgres' password=''"
+- python migrations.py
+
 script:
  - pytest --cov=app/
 

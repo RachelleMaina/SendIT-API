@@ -38,7 +38,7 @@ class UsersModel(object):
         user_from_db = cur.fetchone()
         if cur.rowcount == 1: 
             resp = self.serialize_user(user_from_db)
-            if self.verify_hash(password, resp["password"]) is True:  
+            if self.verify_hash(password, resp["password"]):  
             
                 return resp
 
@@ -49,14 +49,12 @@ class UsersModel(object):
        
         cur = self.db.cursor()
         query = """INSERT INTO users( username, password, phone, email)
-         VALUES(%s, %s, %s, %s)"""
+         VALUES(%s, %s, %s, %s) RETURNING username, password, phone, email;"""
         
         data = (username, password, phone, email)
         cur.execute(query, data)
         self.db.commit()
-        return "Signed up successifully"
-    
-        self.db.close()
+       
 
     def user_by_id(self, userId):
         """Method to fetch one user."""
