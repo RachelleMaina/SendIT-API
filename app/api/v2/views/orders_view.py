@@ -9,54 +9,58 @@ from ..models.users_model import UsersModel
 
 class CreateOrder(Resource, OrdersModel):
     """"Class to handle  create parcel order deliveries."""
-
+    @jwt_required
     def post(self):
         """"Http method to create parcel order deliveries."""
-        parser = reqparse.RequestParser()
-        parser.add_argument(
-            'user_id', help='user_id cannot be blank', required=True)
-        parser.add_argument(
-            'pickup_location', help='pickup_location cannot be blank', required=True)
-        parser.add_argument(
-            'destination', help='destination cannot be blank', required=True)
-        parser.add_argument(
-            'weight', help='weight cannot be blank', required=True)
+        users = get_jwt_identity()
+        user_id= users["user_id"]
+        if users["role"] == "User":
+            parser = reqparse.RequestParser()
+            parser.add_argument(
+                'pickup_location', help='pickup_location cannot be blank', required=True)
+            parser.add_argument(
+                'destination', help='destination cannot be blank', required=True)
+            parser.add_argument(
+                'weight', help='weight cannot be blank', required=True)
 
-        data = parser.parse_args()
-        user_id = str(data["user_id"])
-        pickup_location = str(data["pickup_location"])
-        destination = str(data["destination"])
-        weight = str(data["weight"])
-        price = 1000
+            data = parser.parse_args()
+            pickup_location = str(data["pickup_location"])
+            destination = str(data["destination"])
+            weight = str(data["weight"])
+            price = 1000
 
-        if user_id.isdigit() is False or  weight.isdigit() is False:
-            abort(make_response(
-                jsonify(message="user_id and weight should be a number"), 400))
+            if weight.isdigit() is False:
+                abort(make_response(
+                    jsonify(message="weight should be a number"), 400))
+
+            if not pickup_location or destination:
+                abort(make_response(
+                    jsonify(message="pickup_location and destination cannot be empty"), 400))
+
+            if not re.match("^[a-zA-Z _-]*$", destination):
+                abort(make_response(
+                    jsonify(message="destination should have letters, spaces, _ and - only"), 400))
+
+            if not re.match("^[a-zA-Z _-]*$", pickup_location):
+                abort(make_response(jsonify(
+                    message="pickup_location should have letters, spaces, _ and - only"), 400))
 
 
-        user = UsersModel()
+            order = self.create_order(user_id=int(user_id), pickup_location=pickup_location,
+                                      destination=destination, weight=int(weight), price=int(price))
 
-        if user.user_by_id(int(user_id)) is None:
-            abort(make_response(jsonify(message="User with id " +
-                                        str(user_id) + " does not exist"), 400))
-
-
-        order = self.create_order(user_id=int(user_id), pickup_location=pickup_location,
-                                  destination=destination, weight=int(weight), price=int(price))
-
-        return make_response(jsonify({
-            "Message": "Parcel Order Created"
-        }), 201)
+            return make_response(jsonify({
+                "Message": "Parcel Order Created",
+                "Data": order
+            }), 201)
 
 class AllOrdersinApplication(Resource, OrdersModel):
     """"Class to handle all parcel order deliveries views."""
     @jwt_required
     def get(self):
         """"Http method to get all parcel order deliveries."""
-        username = get_jwt_identity()
-        user = UsersModel()
-        user_role=user.user_by_username(username)
-        if user_role["role"] == "Admin":
+        users = get_jwt_identity()
+        if users["role"] == "Admin":
 
             order = self.get_all_orders()
             if order is not None:
@@ -81,15 +85,23 @@ class ChangeStatus(Resource, OrdersModel):
     @jwt_required
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
-        username = get_jwt_identity()
-        user = UsersModel()
-        user_role=user.user_by_username(username)
-        if user_role["role"] == "Admin":
+        
+        users = get_jwt_identity()
+        username = users["username"]
+        if users["role"] == "Admin":
+            status_message = ["In Transit", "Delivered", "Cancelled"]
             parser = reqparse.RequestParser()
             parser.add_argument(
                 'status', help='status cannot be blank', required=True)
             data = parser.parse_args()
             status = data["status"]
+            if status not in status_message:
+                return make_response(jsonify(
+                {
+                    "Message": "Status should be: In Transit, Delivered or Cancelled"
+                }), 404)
+
+            
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
                 abort(make_response(jsonify(message="parcelId should be a number"), 400))
@@ -104,7 +116,8 @@ class ChangeStatus(Resource, OrdersModel):
             
             return make_response(jsonify(
                     {
-                        "Message": "Status of Order with id " + str(parcelId) + " Changed"
+                        "Message": "Status of Order with id " + str(parcelId) + " Changed",
+                        "Data": order
                         
                     }), 200)
         return make_response(jsonify(
@@ -118,17 +131,15 @@ class AllOrdersByUser(Resource, OrdersModel):
     @jwt_required
     def get(self):
         """"Http method to get all parcel order deliveries by a specific user."""
-        username = get_jwt_identity()
-        user = UsersModel()
-        user_data=user.user_by_username(username)
-        
-        userId = user_data["user_id"]
+        users = get_jwt_identity()
+        username = users["username"]        
+        userId = users["user_id"]
         
         order = self.get_all_orders_by_user(userId)
         if order is not None:
             return make_response(jsonify({
                 "Message": "All orders by User with id " + str(userId),
-                "Order": order
+                "Data": order
             }), 200)
 
         return make_response(jsonify({
@@ -140,10 +151,10 @@ class ChangeLocation(Resource, OrdersModel):
     @jwt_required
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
-        username = get_jwt_identity()
-        user = UsersModel()
-        user_role=user.user_by_username(username)
-        if user_role["role"] == "Admin":
+        
+        users = get_jwt_identity()
+        username = users["username"]
+        if users["role"] == "Admin":
             parser = reqparse.RequestParser()
             parser.add_argument(
                 'current_location', help='current_location cannot be blank', required=True)
@@ -163,10 +174,48 @@ class ChangeLocation(Resource, OrdersModel):
             
             return make_response(jsonify(
                     {
-                        "Message": "Destination of Order with id " + str(parcelId) + " Changed"
+                        "Message": "Present Location of Order with id " + str(parcelId) + " Changed",
+                        "Data": order
                         
                     }), 200)
         return make_response(jsonify(
                 {
                     "Message": "Method not allowed for this user"
-                }), 404)
+                }), 400)
+class ChangeDestination(Resource, OrdersModel):
+    """"Class to handle cancel parcel order deliveries."""
+    @jwt_required
+    def put(self, parcelId):
+        """"Http method to cancel a parcel order delivery."""
+        users = get_jwt_identity()
+        username = users["username"]
+        user_id = users["user_id"]
+        
+        if users["role"] == "User":
+            parser = reqparse.RequestParser()
+            parser.add_argument(
+                'destination', help='destination cannot be blank', required=True)
+            data = parser.parse_args()
+            destination = data["destination"]
+            parcelId = str(parcelId)
+            if parcelId.isdigit() == False:
+                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+
+            if self.get_one_order(int(parcelId)) is None:
+                abort(make_response(jsonify({
+                    "Message": "Parcel Order with given id does not exist"
+
+                }), 400))
+
+            order = self.change_destination(user_id, destination, parcelId)
+            
+            return make_response(jsonify(
+                    {
+                        "Message": "Destination of parcel order with id " + str(parcelId) + " changed successfully",
+                        "Order": order
+                        
+                    }), 200)
+        return make_response(jsonify(
+                {
+                    "Message": "Method not allowed for this user"
+                }), 400)

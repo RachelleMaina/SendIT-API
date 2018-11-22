@@ -20,24 +20,19 @@ class Login(Resource, UsersModel):
         username = data["username"]
         password = data["password"]
 
-        # try:
-        #     user = self.login(username, password)
-        #     access_token = create_access_token(identity = username)
-        #     return make_response(jsonify({
-        #         "Message": "Signed in as " + user["role"],
-        #         'access_token': access_token
-        #     }), 200)
+        try:
+            user = self.login(username, password)
+            access_token = create_access_token(identity = user)
+            return make_response(jsonify({
+                "Message": "Signed in as " + user["role"],
+                'access_token': access_token
+            }), 200)
 
-        # except:
-        #     return make_response(jsonify({
-        #         "Message": "Invalid Password or username"
-        #     }), 404)
-        user = self.login(username, password)
-        access_token = create_access_token(identity = username)
-        return make_response(jsonify({
-            "Message": "Signed in as " + user["role"],
-            'access_token': access_token
-        }), 200)
+        except:
+            return make_response(jsonify({
+                "Message": "Invalid Password or username"
+            }), 404)
+
 
 
 
@@ -61,6 +56,22 @@ class Register(Resource, UsersModel):
         phone = str(data["phone"])
         email = str(data["email"])
 
+        if not username or not password or not phone or not email:
+            abort(make_response(
+                jsonify(message="password, email, phone and email fields cannot be empty"), 400))
+
+        if not re.match("^[0-9]*$", phone) or len(phone) != 12:
+            abort(make_response(
+                jsonify(message="phone number should have 12 digits and of the format 254*********"), 400))
+
+        if not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
+            abort(make_response(jsonify(message="Email given is not valid"), 400))
+
+
+        if not re.match("^[a-zA-Z _-]*$", username):
+            abort(make_response(
+                jsonify(message="username should have letters, spaces, _ and - only"), 400))
+
 
         try:
             user = self.register(
@@ -72,7 +83,7 @@ class Register(Resource, UsersModel):
             return make_response(jsonify({
                     "Message": "username, password or email  already exists"
                     
-                }), 200)
+                }), 400)
 
 
 
