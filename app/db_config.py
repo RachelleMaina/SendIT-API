@@ -1,5 +1,6 @@
 import psycopg2
 import os
+from passlib.hash import pbkdf2_sha256 as sha256
 
 
 url = "dbname = 'sendit' host = 'localhost' port = '5432'\
@@ -54,11 +55,29 @@ def tables():
         user_id integer REFERENCES users(user_id) ON DELETE CASCADE,
         pickup_location varchar(50) NOT NULL,
         destination varchar(50) NOT NULL,
+        current_location varchar(50) NOT NULL DEFAULT '',
         weight varchar(50)NOT NULL,
         price varchar(50)  NOT NULL,
         status varchar(50) NOT NULL DEFAULT 'Pending Delivery',
         date_created timestamp with time zone DEFAULT ('now'::text)::date
     ); """
 
+
     queries = (users, orders)
     return queries
+
+def generate_hash(password):
+        return sha256.hash(password)
+
+def create_admin():
+    """"Method to create admin account."""
+   
+    con = connection(url)
+    cur = con.cursor()
+    query = """INSERT INTO users( username, password, phone, email, role)
+     VALUES(%s, %s, %s, %s, %s)"""
+    password = generate_hash("maina")
+    data = ("Maina", password, "254712123345", "maina@gmail.com", "Admin")
+    cur.execute(query, data)
+    con.commit()  
+    con.close()

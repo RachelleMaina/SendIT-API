@@ -20,18 +20,25 @@ class Login(Resource, UsersModel):
         username = data["username"]
         password = data["password"]
 
-        try:
-            user = self.login(username, password)
-            access_token = create_access_token(identity = username)
-            return make_response(jsonify({
-                "Message": "Signed in as " + user["role"],
-                'access_token': access_token
-            }), 200)
+        # try:
+        #     user = self.login(username, password)
+        #     access_token = create_access_token(identity = username)
+        #     return make_response(jsonify({
+        #         "Message": "Signed in as " + user["role"],
+        #         'access_token': access_token
+        #     }), 200)
 
-        except:
-            return make_response(jsonify({
-                "Message": "Invalid Password or username"
-            }), 200)
+        # except:
+        #     return make_response(jsonify({
+        #         "Message": "Invalid Password or username"
+        #     }), 404)
+        user = self.login(username, password)
+        access_token = create_access_token(identity = username)
+        return make_response(jsonify({
+            "Message": "Signed in as " + user["role"],
+            'access_token': access_token
+        }), 200)
+
 
 
 class Register(Resource, UsersModel):
