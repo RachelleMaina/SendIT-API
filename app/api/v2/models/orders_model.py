@@ -52,7 +52,7 @@ class OrdersModel(object):
 
         self.db = db_init()
         cur = self.db.cursor()
-        cur.execute("""SELECT user_id, user_id, pickup_location, destination, weight, price, status, date_created  FROM orders WHERE order_id = %s""", (parcelId, ))
+        cur.execute("""SELECT order_id, user_id, pickup_location, current_location, destination, weight, price, status, date_created  FROM orders WHERE order_id = %s""", (parcelId, ))
         all_orders= cur.fetchone()
 
         
@@ -77,7 +77,7 @@ class OrdersModel(object):
 
         self.db = db_init()
         cur = self.db.cursor()
-        cur.execute("""SELECT order_id, user_id, pickup_location, destination, weight, price, status FROM orders WHERE user_id = %s""", (userId, ))
+        cur.execute("""SELECT order_id, user_id, pickup_location, destination, current_location, weight, price, status FROM orders WHERE user_id = %s""", (userId, ))
         all_orders= cur.fetchall()
         if cur.rowcount >= 1:
             resp = self.serialize_order(all_orders)
@@ -95,5 +95,17 @@ class OrdersModel(object):
         cur.execute(query, data)
         self.db.commit()
         self.db.close()
+        
+    def change_destination(self, user_id, destination, parcelId):
+        """"Method to change status of  a parcel order delivery."""
+
+        cur = self.db.cursor()
+        query = """UPDATE orders set destination = %s where user_id = %s and order_id = %s """
+        data = (destination, user_id, parcelId)
+        cur.execute(query, data)
+        self.db.commit()
+        self.db.close()
+
+ 
 
        

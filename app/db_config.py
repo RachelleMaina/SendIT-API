@@ -3,8 +3,8 @@ import os
 from passlib.hash import pbkdf2_sha256 as sha256
 
 
-url = "dbname = 'sendit' host = 'localhost' port = '5432'\
-     user = 'rachel' password = 'rachel100'"
+url = os.getenv('DB_URL')
+
 
 def connection(url):
     con = psycopg2.connect(url)
