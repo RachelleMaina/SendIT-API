@@ -3,7 +3,7 @@ import os
 from passlib.hash import pbkdf2_sha256 as sha256
 
 
-url = os.getenv('DB_URL')
+url = os.getenv('DATABASE_URL')
 
 
 def connection(url):
