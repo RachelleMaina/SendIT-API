@@ -22,6 +22,7 @@ class Login(Resource, UsersModel):
 
         try:
             user = self.login(username, password)
+
             access_token = create_access_token(identity = user)
             return make_response(jsonify({
                 "Message": "Signed in as " + user["role"],
