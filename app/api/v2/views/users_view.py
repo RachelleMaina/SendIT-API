@@ -22,7 +22,8 @@ class Login(Resource, UsersModel):
 
         try:
             user = self.login(username, password)
-            access_token = create_access_token(identity = username)
+
+            access_token = create_access_token(identity = user)
             return make_response(jsonify({
                 "Message": "Signed in as " + user["role"],
                 'access_token': access_token
@@ -83,7 +84,7 @@ class Register(Resource, UsersModel):
             return make_response(jsonify({
                     "Message": "username, password or email  already exists"
                     
-                }), 200)
+                }), 400)
 
 
 
