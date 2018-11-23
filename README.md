@@ -17,29 +17,30 @@ provides courier quotes based on weight categories.
 6. Test the following endpoints on Postman
 
 *ENDPOINTS*
-1. Fetch all parcel delivery orders:
-`localhost:5000/api/v1/parcels`
+1. Signup
+http://rachel-sendit-api.herokuapp.com/api/v2/auth/signup
 
-2. Fetch a specific parcel delivery order
-`localhost:5000/api/v1/parcels/101`
+2. Login
+http://rachel-sendit-api.herokuapp.com/api/v2/auth/login
 
-3. Fetch all parcel delivery orders by a specific user
-`localhost:5000/api/v1/users/1/parcels`
+3. Fetch all parcel delivery orders in the application:
+http://rachel-sendit-api.herokuapp.com/api/v2/parcels`
 
-4. Cancel the specific parcel delivery order
-`localhost:5000/api/v1/parcels/101/cancel`
+4.  Fetch all parcel delivery orders by a specific user
+http://rachel-sendit-api.herokuapp.com/api/v2/user/parcels
 
-5. Create a parcel delivery order
-`localhost:5000/api/v1/parcels`
+5. Change location
+http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/presentLocation
 
-6. Create a user
-`localhost:5000/api/v1/users`
+6. Change destination
+http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/destination
 
-7. Fetch all users
-`localhost:5000/api/v1/users`
+7. Change status
+http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/status
 
-8. Fetch a specific user
-`localhost:5000/api/v1/users/1`
+8. Create Order
+http://rachel-sendit-api.herokuapp.com/api/v2/parcels
+
 
 ### Prerequisites
 
