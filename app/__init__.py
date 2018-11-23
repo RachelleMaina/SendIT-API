@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask import Flask, Blueprint, make_response, jsonify
 from .api.v1 import version1_blueprint
 from .api.v2 import version2_blueprint
-from .db_config import create_tables, destroy_tables, create_admin, db_init
+
 
 
 
@@ -25,9 +25,7 @@ def create_app(config_class=Config):
     app.config['JWT_SECRET_KEY'] = 'jwt-rakeli'
 
     jwt = JWTManager(app)
-    db_init()
-    
-    create_tables()
+
 
     
     

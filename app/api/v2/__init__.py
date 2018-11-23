@@ -12,7 +12,7 @@ api.add_resource(CreateOrder, '/parcels')
 api.add_resource(AllOrdersinApplication, '/parcels')
 api.add_resource(ChangeStatus, '/parcels/<parcelId>/status')
 api.add_resource(ChangeLocation, '/parcels/<parcelId>/presentLocation')
-api.add_resource(AllOrdersByUser, '/parcels')
+api.add_resource(AllOrdersByUser, '/user/parcels')
 api.add_resource(ChangeDestination, '/parcels/<parcelId>/destination')
 
 
