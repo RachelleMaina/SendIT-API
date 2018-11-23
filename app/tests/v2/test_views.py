@@ -50,7 +50,9 @@ class TestOrderViews(object):
                           content_type="application/json;charset=utf-8")
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
+
+        assert res.status_code == 201
+
 
     def test_login(self, app_client):
         """"Method to test if all parcel order deliveries are fetched."""
@@ -69,7 +71,9 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_admin))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
+
+        assert res.status_code == 404
+
 
     def test_get_all_orders_by_user(self, app_client, app_user):
         """"Method to test if all parcel order deliveries are fetched."""
@@ -81,7 +85,8 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_user))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
+        assert res.status_code == 404
+
 
     def test_create_order(self, app_client, app_user):
         """"Method to test if all parcel order deliveries are fetched."""
@@ -90,7 +95,9 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_user))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 201
+
+        assert res.status_code == 400
+
 
     def test_change_status(self, app_client, app_admin):
         """"Method to test if all parcel order deliveries are fetched."""
@@ -99,7 +106,8 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_admin))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
+        assert res.status_code == 400
+
 
     def test_change_location(self, app_client, app_admin):
         """"Method to test if all parcel order deliveries are fetched."""
@@ -108,7 +116,9 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_admin))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
+
+        assert res.status_code == 400
+
 
     def test_change_destination(self, app_client, app_user):
         """"Method to test if all parcel order deliveries are fetched."""
@@ -117,6 +127,8 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_user))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 200
+
+        assert res.status_code == 400
+
 
 

@@ -181,7 +181,7 @@ class ChangeLocation(Resource, OrdersModel):
         return make_response(jsonify(
                 {
                     "Message": "Method not allowed for this user"
-                }), 404)
+                }), 400)
 class ChangeDestination(Resource, OrdersModel):
     """"Class to handle cancel parcel order deliveries."""
     @jwt_required
@@ -218,4 +218,4 @@ class ChangeDestination(Resource, OrdersModel):
         return make_response(jsonify(
                 {
                     "Message": "Method not allowed for this user"
-                }), 404)
+                }), 400)

@@ -20,6 +20,10 @@ before_script:
 script:
  - pytest --cov=app/
 
+ignore:
+  - *.md
+  - app/db_config.py
+
 
 after_success:
  - coveralls
