@@ -6,12 +6,6 @@ from .api.v1 import version1_blueprint
 from .api.v2 import version2_blueprint
 
 
-
-
-
-
-
-
 def page_not_found(e):
     return make_response(jsonify(
         {
@@ -28,6 +22,7 @@ def create_app(config_class=Config):
     """"Method to initialize app."""
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.config['PROPAGATE_EXCEPTIONS'] = True
     app.config['JWT_SECRET_KEY'] = 'jwt-rakeli'
     mail = Mail(app)
 
