@@ -22,7 +22,8 @@ class Login(Resource, UsersModel):
 
         try:
             user = self.login(username, password)
-            access_token = create_access_token(identity = username)
+
+            access_token = create_access_token(identity = user)
             return make_response(jsonify({
                 "Message": "Signed in as " + user["role"],
                 'access_token': access_token
@@ -55,8 +56,12 @@ class Register(Resource, UsersModel):
         password = self.generate_hash(data['password'])
         phone = str(data["phone"])
         email = str(data["email"])
+        stripped_username= username.strip()
+        stripped_password= password.strip()
+        stripped_phone= phone.strip()
+        stripped_email= email.strip()
 
-        if not username or not password or not phone or not email:
+        if not stripped_username or not stripped_password or not stripped_phone or not stripped_email:
             abort(make_response(
                 jsonify(message="password, email, phone and email fields cannot be empty"), 400))
 
@@ -83,7 +88,7 @@ class Register(Resource, UsersModel):
             return make_response(jsonify({
                     "Message": "username, password or email  already exists"
                     
-                }), 200)
+                }), 400)
 
 
 

@@ -1,4 +1,4 @@
-from app.db_config import db_init
+from instance.db_config import db_init
 
 
 class OrdersModel(object):

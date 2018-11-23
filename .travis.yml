@@ -18,7 +18,7 @@ before_script:
 - python migrations.py
 
 script:
- - pytest --cov=app/
+- pytest --cov=app/
 
 
 after_success:
