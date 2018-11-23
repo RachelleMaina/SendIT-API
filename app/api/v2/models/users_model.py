@@ -1,6 +1,6 @@
 import psycopg2
 from passlib.hash import pbkdf2_sha256 as sha256
-from app.db_config import db_init
+from instance.db_config import db_init
 
 
 class UsersModel(object):

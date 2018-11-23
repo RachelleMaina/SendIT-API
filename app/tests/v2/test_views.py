@@ -72,7 +72,7 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
 
-        assert res.status_code == 404
+        assert res.status_code == 200
 
 
     def test_get_all_orders_by_user(self, app_client, app_user):
@@ -85,7 +85,7 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_user))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 404
+        assert res.status_code == 200
 
 
     def test_create_order(self, app_client, app_user):
@@ -96,7 +96,7 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
 
-        assert res.status_code == 400
+        assert res.status_code == 201
 
 
     def test_change_status(self, app_client, app_admin):
@@ -106,7 +106,7 @@ class TestOrderViews(object):
                            headers=dict(Authorization="Bearer " + app_admin))
 
         res_data = json.loads(res.data.decode())
-        assert res.status_code == 400
+        assert res.status_code == 200
 
 
     def test_change_location(self, app_client, app_admin):
@@ -117,7 +117,7 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
 
-        assert res.status_code == 400
+        assert res.status_code == 200
 
 
     def test_change_destination(self, app_client, app_user):
@@ -128,7 +128,7 @@ class TestOrderViews(object):
 
         res_data = json.loads(res.data.decode())
 
-        assert res.status_code == 400
+        assert res.status_code == 200
 
 
 

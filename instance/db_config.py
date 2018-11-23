@@ -3,7 +3,7 @@ import os
 from passlib.hash import pbkdf2_sha256 as sha256
 
 
-url = os.getenv('DB_URL')
+url = os.getenv('DATABASE_URL')
 
 
 def connection(url):
@@ -81,3 +81,30 @@ def create_admin():
     cur.execute(query, data)
     con.commit()  
     con.close()
+
+def create_user():
+    """"Method to create admin account."""
+   
+    con = connection(url)
+    cur = con.cursor()
+    query = """INSERT INTO users( username, password, phone, email, role)
+     VALUES(%s, %s, %s, %s, %s)"""
+    password = generate_hash("mercy")
+    data = ("Mercy", password, "254712123785", "mercy@gmail.com", "User")
+    cur.execute(query, data)
+    con.commit()  
+    con.close()
+
+def create_order():
+    """"Method to create admin account."""
+   
+    con = connection(url)
+    cur = con.cursor()
+    
+    query = """INSERT INTO orders(user_id, pickup_location, destination, weight, price)
+     VALUES(%s, %s, %s, %s, %s)"""
+    data = (1, "Limuru", "Narok", "20", "2000")
+    cur.execute(query, data)
+    con.commit()
+    con.close()
+    

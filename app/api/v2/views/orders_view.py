@@ -1,6 +1,7 @@
 import re
 from flask_jwt_extended import (create_access_token,
                                 jwt_required, get_jwt_identity, get_raw_jwt, jwt_required)
+from flask_mail import Message
 from flask import request, make_response, jsonify, abort
 from flask_restful import Resource, reqparse
 from ..models.orders_model import OrdersModel
@@ -14,6 +15,7 @@ class CreateOrder(Resource, OrdersModel):
         """"Http method to create parcel order deliveries."""
         users = get_jwt_identity()
         user_id= users["user_id"]
+
         if users["role"] == "User":
             parser = reqparse.RequestParser()
             parser.add_argument(
@@ -28,14 +30,19 @@ class CreateOrder(Resource, OrdersModel):
             destination = str(data["destination"])
             weight = str(data["weight"])
             price = 1000
+            stripped_destination= destination.strip()
+            stripped_pickup_location= pickup_location.strip()
 
             if weight.isdigit() is False:
                 abort(make_response(
                     jsonify(message="weight should be a number"), 400))
 
-            if not pickup_location or destination:
+            if not stripped_pickup_location:
                 abort(make_response(
-                    jsonify(message="pickup_location and destination cannot be empty"), 400))
+                    jsonify(message="pickup_location cannot be empty"), 400))
+            if not stripped_destination:
+                abort(make_response(
+                    jsonify(message="destination cannot be empty"), 400))
 
             if not re.match("^[a-zA-Z _-]*$", destination):
                 abort(make_response(
@@ -76,7 +83,7 @@ class AllOrdersinApplication(Resource, OrdersModel):
                 }), 404)
         return make_response(jsonify(
                 {
-                    "Message": "Method not allowed for this user"
+                    "Message": "Operation not allowed for this user"
                 }), 404)
 
 
@@ -122,7 +129,7 @@ class ChangeStatus(Resource, OrdersModel):
                     }), 200)
         return make_response(jsonify(
                 {
-                    "Message": "Method not allowed for this user"
+                    "Message": "Operation not allowed for this user"
                 }), 404)
 
 
@@ -170,7 +177,12 @@ class ChangeLocation(Resource, OrdersModel):
 
                 }), 400))
 
+            email = users["email"]
+            message = Message("Your parcel is not at " + current_location, sender="mainarachell@gmail.com",
+                  recipients = [email])
+
             order = self.change_location(current_location, parcelId)
+            #self.mail.send(msg)
             
             return make_response(jsonify(
                     {
@@ -180,7 +192,7 @@ class ChangeLocation(Resource, OrdersModel):
                     }), 200)
         return make_response(jsonify(
                 {
-                    "Message": "Method not allowed for this user"
+                    "Message": "Operation not allowed for this user"
                 }), 400)
 class ChangeDestination(Resource, OrdersModel):
     """"Class to handle cancel parcel order deliveries."""
@@ -217,5 +229,5 @@ class ChangeDestination(Resource, OrdersModel):
                     }), 200)
         return make_response(jsonify(
                 {
-                    "Message": "Method not allowed for this user"
+                    "Message": "Operation not allowed for this user"
                 }), 400)

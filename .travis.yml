@@ -18,11 +18,11 @@ before_script:
 - python migrations.py
 
 script:
+<<<<<<< HEAD
+- pytest --cov=app/
+=======
  - pytest --cov=app/
-
-ignore:
-  - *.md
-  - app/db_config.py
+>>>>>>> 30ae6d69ab54ebb4c39f5b062df71c6aa37da92c
 
 
 after_success:
