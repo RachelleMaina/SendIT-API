@@ -6,6 +6,7 @@ from flask import request, make_response, jsonify, abort
 from flask_restful import Resource, reqparse
 from ..models.orders_model import OrdersModel
 from ..models.users_model import UsersModel
+from .email import Emails
 
 
 class CreateOrder(Resource, OrdersModel):
@@ -14,7 +15,7 @@ class CreateOrder(Resource, OrdersModel):
     def post(self):
         """"Http method to create parcel order deliveries."""
         users = get_jwt_identity()
-        user_id= users["user_id"]
+        user_id = users["user_id"]
 
         if users["role"] == "User":
             parser = reqparse.RequestParser()
@@ -30,8 +31,8 @@ class CreateOrder(Resource, OrdersModel):
             destination = str(data["destination"])
             weight = str(data["weight"])
             price = 1000
-            stripped_destination= destination.strip()
-            stripped_pickup_location= pickup_location.strip()
+            stripped_destination = destination.strip()
+            stripped_pickup_location = pickup_location.strip()
 
             if weight.isdigit() is False:
                 abort(make_response(
@@ -52,14 +53,14 @@ class CreateOrder(Resource, OrdersModel):
                 abort(make_response(jsonify(
                     message="pickup_location should have letters, spaces, _ and - only"), 400))
 
-
             order = self.create_order(user_id=int(user_id), pickup_location=pickup_location,
                                       destination=destination, weight=int(weight), price=int(price))
 
             return make_response(jsonify({
-                "Message": "Parcel Order Created",
-                "Data": order
+                "Message": "Parcel Order Created Successifully"
+                
             }), 201)
+
 
 class AllOrdersinApplication(Resource, OrdersModel):
     """"Class to handle all parcel order deliveries views."""
@@ -82,9 +83,9 @@ class AllOrdersinApplication(Resource, OrdersModel):
                     "Message": "No Orders Found"
                 }), 404)
         return make_response(jsonify(
-                {
-                    "Message": "Operation not allowed for this user"
-                }), 404)
+            {
+                "Message": "Operation not allowed for this user"
+            }), 404)
 
 
 class ChangeStatus(Resource, OrdersModel):
@@ -92,7 +93,7 @@ class ChangeStatus(Resource, OrdersModel):
     @jwt_required
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
-        
+
         users = get_jwt_identity()
         username = users["username"]
         if users["role"] == "Admin":
@@ -104,14 +105,14 @@ class ChangeStatus(Resource, OrdersModel):
             status = data["status"]
             if status not in status_message:
                 return make_response(jsonify(
-                {
-                    "Message": "Status should be: In Transit, Delivered or Cancelled"
-                }), 404)
+                    {
+                        "Message": "Status should be: In Transit, Delivered or Cancelled"
+                    }), 404)
 
-            
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
-                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+                abort(make_response(
+                    jsonify(message="parcelId should be a number"), 400))
 
             if self.get_one_order(int(parcelId)) is None:
                 abort(make_response(jsonify({
@@ -119,18 +120,30 @@ class ChangeStatus(Resource, OrdersModel):
 
                 }), 400))
 
-            order = self.change_status(status, parcelId)
             
-            return make_response(jsonify(
+            
+            try:
+                order = self.change_status(status, parcelId)
+                one_order = self.get_one_order(parcelId)
+                user_id = one_order["user_id"]
+                one_user = UsersModel
+                user_by_id = one_user.user_by_id(self, user_id)
+                email = user_by_id["email"]
+                user_email = Emails()
+                user_email.change_status(email, order, user_by_id)
+                return make_response(jsonify(
                     {
-                        "Message": "Status of Order with id " + str(parcelId) + " Changed",
-                        "Data": order
-                        
+                        "Message": "Status of Order with id " + str(parcelId) + " Changed"
+
                     }), 200)
+            except:
+                return make_response(jsonify({
+                    "Message": "A problem occured while trying to change parcel status. Please check the information given and try again"
+                }), 400)
         return make_response(jsonify(
-                {
-                    "Message": "Operation not allowed for this user"
-                }), 404)
+            {
+                "Message": "Operation not allowed for this user"
+            }), 404)
 
 
 class AllOrdersByUser(Resource, OrdersModel):
@@ -139,9 +152,9 @@ class AllOrdersByUser(Resource, OrdersModel):
     def get(self):
         """"Http method to get all parcel order deliveries by a specific user."""
         users = get_jwt_identity()
-        username = users["username"]        
+        username = users["username"]
         userId = users["user_id"]
-        
+
         order = self.get_all_orders_by_user(userId)
         if order is not None:
             return make_response(jsonify({
@@ -152,13 +165,14 @@ class AllOrdersByUser(Resource, OrdersModel):
         return make_response(jsonify({
             "Message": "No parcel orders found"
         }), 404)
-      
+
+
 class ChangeLocation(Resource, OrdersModel):
     """"Class to  change location of  parcel order deliveries."""
     @jwt_required
     def put(self, parcelId):
         """"Http method to cancel a parcel order delivery."""
-        
+
         users = get_jwt_identity()
         username = users["username"]
         if users["role"] == "Admin":
@@ -169,31 +183,41 @@ class ChangeLocation(Resource, OrdersModel):
             current_location = data["current_location"]
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
-                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+                abort(make_response(
+                    jsonify(message="parcelId should be a number"), 400))
 
             if self.get_one_order(int(parcelId)) is None:
                 abort(make_response(jsonify({
                     "Message": "Order with given id does not exist"
 
                 }), 400))
-
-            email = users["email"]
-            message = Message("Your parcel is not at " + current_location, sender="mainarachell@gmail.com",
-                  recipients = [email])
-
-            order = self.change_location(current_location, parcelId)
-            #self.mail.send(msg)
             
-            return make_response(jsonify(
-                    {
-                        "Message": "Present Location of Order with id " + str(parcelId) + " Changed",
-                        "Data": order
-                        
-                    }), 200)
-        return make_response(jsonify(
-                {
-                    "Message": "Operation not allowed for this user"
+
+
+            try:
+                order = self.change_location(current_location, parcelId)
+                one_order = self.get_one_order(parcelId)
+                user_id = one_order["user_id"]
+                one_user = UsersModel
+                user_by_id = one_user.user_by_id(self, user_id)
+                email = user_by_id["email"]
+                user_email = Emails()
+                user_email.change_location(email, order, user_by_id)
+                return make_response(jsonify({
+                    "Message": "Present Location of Order with id " + str(parcelId) + " Changed"
+
+                }), 200)
+            except:
+                return make_response(jsonify({
+                    "Message": "A problem occured while trying to change parcel location. Please check the information given and try again"
                 }), 400)
+
+        return make_response(jsonify(
+            {
+                "Message": "Operation not allowed for this user"
+            }), 400)
+
+
 class ChangeDestination(Resource, OrdersModel):
     """"Class to handle cancel parcel order deliveries."""
     @jwt_required
@@ -202,7 +226,7 @@ class ChangeDestination(Resource, OrdersModel):
         users = get_jwt_identity()
         username = users["username"]
         user_id = users["user_id"]
-        
+
         if users["role"] == "User":
             parser = reqparse.RequestParser()
             parser.add_argument(
@@ -211,7 +235,8 @@ class ChangeDestination(Resource, OrdersModel):
             destination = data["destination"]
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
-                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+                abort(make_response(
+                    jsonify(message="parcelId should be a number"), 400))
 
             if self.get_one_order(int(parcelId)) is None:
                 abort(make_response(jsonify({
@@ -219,15 +244,22 @@ class ChangeDestination(Resource, OrdersModel):
 
                 }), 400))
 
-            order = self.change_destination(user_id, destination, parcelId)
-            
-            return make_response(jsonify(
-                    {
-                        "Message": "Destination of parcel order with id " + str(parcelId) + " changed successfully",
-                        "Order": order
-                        
-                    }), 200)
-        return make_response(jsonify(
-                {
-                    "Message": "Operation not allowed for this user"
+  
+            try:
+                order = self.change_destination(user_id, destination, parcelId)
+                one_order = self.get_one_order(parcelId)
+                email = users["email"]
+                user_email = Emails()
+                user_email.change_destination(email, order, users)
+                return make_response(jsonify({
+                    "Message": "Destination of Order with id " + str(parcelId) + " Changed"
+
+                }), 200)
+            except:
+                return make_response(jsonify({
+                    "Message": "A problem occured while trying to change parcel destination. Please check the information given and try again"
                 }), 400)
+        return make_response(jsonify(
+            {
+                "Message": "Operation not allowed for this user"
+            }), 400)
