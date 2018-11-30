@@ -14,15 +14,12 @@ services:
 
 before_script:
 - psql -c 'create database sendit_test;' -U postgres
-- export DB_URL="dbname='sendit_test' host='localhost' port='5432' user='postgres' password=''"
+- export DATABASE_URL="dbname='sendit_test' host='localhost' port='5432' user='postgres' password=''"
 - python migrations.py
 
 script:
-<<<<<<< HEAD
 - pytest --cov=app/
-=======
- - pytest --cov=app/
->>>>>>> 30ae6d69ab54ebb4c39f5b062df71c6aa37da92c
+
 
 
 after_success:

@@ -8,7 +8,6 @@ from flask_mail import Mail
 from .api.v1 import version1_blueprint
 from .api.v2 import version2_blueprint
 
-
 def init():
     """Method to initialize app"""
     app = Flask(__name__)
@@ -46,6 +45,7 @@ def handle_server_error(e):
 def create_app():
     app = init()
     send_email()
+
     jwt = JWTManager(app)
     app.config.from_object(os.environ['APP_SETTINGS'])
     app.config['JWT_SECRET_KEY'] = 'jwt-rakeli'
