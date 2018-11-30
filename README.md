@@ -19,11 +19,14 @@ Postman, Linux Terminal
 ```
 
 ## Testing Endpoints
+```
 1. Setup the database and create tables with the command `python migrations.py`
 2. Then set your environment command `FLASK_APP=run.py`
 3. Lastly Run flask with the command `flask run`
+```
 
-Test the following endpoints on Postman
+  Test the following endpoints on Postman
+  ```
 
 1. Signup:  POST:`http://rachel-sendit-api.herokuapp.com/api/v2/auth/signup`
 2. Login:   POST: `http://rachel-sendit-api.herokuapp.com/api/v2/auth/login`
@@ -32,26 +35,37 @@ Test the following endpoints on Postman
 5. Fetch all parcel delivery orders in the application: GET: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels`
 6. Change location: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/presentLocation`
 7. Change destination: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/destination`
-8. Change status: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/status
+8. Change status: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/status`
+```
 
 ## Running Tests
 To run tests, use the command `pytest`
 
 ## Hosting Link
+```
 https://rachel-sendit-api.herokuapp.com/
+```
 
 ## Documentation
+```
 https://documenter.getpostman.com/view/5893140/RzfZPDAD
+```
 
 ## Built With
+```
 * Python
+```
 
 ## Authors
+```
 **Rachel Maina** 
+```
 
 
 ## License
-No Licencing yet
+```
+No Licensing yet
+```
 
 
 
