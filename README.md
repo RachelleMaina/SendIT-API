@@ -11,23 +11,20 @@ Postman, Linux Terminal
 ```
 
 ### Installing
-```
+
 1. Download project files from `https://github.com/RachelleMaina/SendIT-API`
 2. On your local machine, cd to the project folder and Set up the commamnd `virtualenv venv`
 3. Activate the virtual environment with `source venv/bin/activate`
 4. Install dependencies with  the command`pip install -r requirements.txt`
-```
 
 ## Testing Endpoints
-```
+
 1. Setup the database and create tables with the command `python migrations.py`
 2. Then set your environment command `FLASK_APP=run.py`
 3. Lastly Run flask with the command `flask run`
-```
 
   Test the following endpoints on Postman
-  ```
-
+  
 1. Signup:  POST:`http://rachel-sendit-api.herokuapp.com/api/v2/auth/signup`
 2. Login:   POST: `http://rachel-sendit-api.herokuapp.com/api/v2/auth/login`
 3. Create Order: POST: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels`
@@ -36,7 +33,6 @@ Postman, Linux Terminal
 6. Change location: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/presentLocation`
 7. Change destination: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/destination`
 8. Change status: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/status`
-```
 
 ## Running Tests
 To run tests, use the command `pytest`
