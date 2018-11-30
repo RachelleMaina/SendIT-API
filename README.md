@@ -23,16 +23,37 @@ Postman, Linux Terminal
 2. Then set your environment command `FLASK_APP=run.py`
 3. Lastly Run flask with the command `flask run`
 
-  Test the following endpoints on Postman
+   Test the following endpoints on Postman
   
 1. Signup:  POST:`http://rachel-sendit-api.herokuapp.com/api/v2/auth/signup`
+   ```payload: {"username": "Rachel", "password": "root", "phone": 254412345123, "email": "mainarachelle@gmail.com"}
+   _To get email notification, use an email address you can access_```
+   
 2. Login:   POST: `http://rachel-sendit-api.herokuapp.com/api/v2/auth/login`
+   ```payload: {"username": "Rachel", "password": "root"}```
+   
+   *To access the following endpoints, login with the credentials you used to signup.*
+   e.g payload: {"username": "Rachel", "password": "root"}`
+   
 3. Create Order: POST: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels`
+  ``` payload: {"pickup_location": "Nairobi","destination": "Kisumu", "weight": 20} ```
+  
 4. Fetch all parcel delivery orders by a specific user: GET: `http://rachel-sendit-api.herokuapp.com/api/v2/user/parcels`
-5. Fetch all parcel delivery orders in the application: GET: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels`
-6. Change location: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/presentLocation`
-7. Change destination: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/destination`
-8. Change status: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/status`
+  
+5. Change destination: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/destination`
+   ```payload:  {"destination": "Malindi"}```
+   
+    *To access the following endpoints, login as an Admin.*
+
+6. Fetch all parcel delivery orders in the application: GET: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels`
+
+7. Fetch all users in the Application: GET: `http://rachel-sendit-api.herokuapp.com/api/v2/users`
+
+8. Change location: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/presentLocation`
+    ```payload: {"current_location": "Marsabit"}```
+     
+9. Change status: PUT: `http://rachel-sendit-api.herokuapp.com/api/v2/parcels/1/status`
+``` {"status": "Delivered"}```
 
 ## Running Tests
 To run tests, use the command `pytest`
