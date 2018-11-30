@@ -4,6 +4,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 from flask import request, make_response, jsonify, abort
 from flask_restful import Resource, reqparse
 from ..models.users_model import UsersModel
+from .email import Emails
 
 
 class Login(Resource, UsersModel):
@@ -17,11 +18,11 @@ class Login(Resource, UsersModel):
         parser.add_argument(
             'password', help='password cannot be blank', required=True)
         data = parser.parse_args()
-        username = data["username"]
-        password = data["password"]
-
+        user_username = data["username"]
+        user_password = data["password"]
+       
         try:
-            user = self.login(username, password)
+            user = self.login(user_username, user_password)
 
             access_token = create_access_token(identity = user)
             return make_response(jsonify({
@@ -78,17 +79,40 @@ class Register(Resource, UsersModel):
                 jsonify(message="username should have letters, spaces, _ and - only"), 400))
 
 
+
         try:
+            user_email = Emails()
+            user_email.user_registration(email)
             user = self.register(
                 username=username, password=password, phone=phone, email=email)
+            
             return make_response(jsonify({
                 "Message": "Signup successiful"
             }), 201)
         except:
             return make_response(jsonify({
-                    "Message": "username, password or email  already exists"
+                    "Message": "username, password or email  already exists or Email given does not exist"
                     
                 }), 400)
+
+class AllUsers(Resource, UsersModel):
+    """Class to handle all users."""
+
+    @jwt_required
+    def get(self):
+        """Method to return all users"""
+        users = get_jwt_identity()
+        if users["role"] == "Admin":
+            user = self.all_users()
+            return make_response(jsonify({
+                "Message": "All users",
+                "User": user
+            }), 200)
+
+        return make_response(jsonify(
+            {
+                "Message": "Operation not allowed for this user"
+            }), 400)
 
 
 

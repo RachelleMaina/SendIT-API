@@ -22,18 +22,13 @@ class OrdersModel(object):
         """"Method to create a parcel order deliveries."""
 
         cur = self.db.cursor()
-        query = """INSERT INTO orders(user_id, pickup_location, destination, weight, price)
-         VALUES(%s, %s, %s, %s, %s) RETURNING  pickup_location, destination, weight, price """
+        query = """INSERT INTO orders(user_id, pickup_location, destination, current_location, weight, price)
+         VALUES(%s, %s, %s, %s, %s, %s) RETURNING  pickup_location, destination, weight, price """
         data = (user_id, pickup_location,
-                destination, weight, price)
+                destination, pickup_location, weight, price)
         cur.execute(query, data)
         self.db.commit()
-        order_from_db= cur.fetchone()
-        pickup_location, destination, weight, price= order_from_db
-        order = dict(pickup_location=pickup_location,
-                         destination=destination, weight=weight, price=price)
-            
-        return order
+
 
     def get_all_orders(self):
         """"Method to fetch all parcel order deliveries."""
@@ -57,10 +52,19 @@ class OrdersModel(object):
         self.db = db_init()
         cur = self.db.cursor()
         cur.execute("""SELECT order_id, user_id, pickup_location, current_location, 
-            destination, weight, price, status, date_created  
+            destination, weight, price, status 
             FROM orders WHERE order_id = %s""", (parcelId, ))
-        all_orders = cur.fetchone()
-        return all_orders
+        order_from_db = cur.fetchone()
+        if cur.rowcount == 1:
+            order_id, user_id, pickup_location, destination, current_location, weight, price, status = order_from_db
+            order = dict(order_id=order_id, user_id=user_id, pickup_location=pickup_location,
+                             destination=destination, current_location=current_location, weight=weight, price=price, status=status)
+                
+            return order
+        return None
+
+
+
         
 
     def change_status(self, status, parcelId):
@@ -71,7 +75,7 @@ class OrdersModel(object):
         data = (status, parcelId)
         cur.execute(query, data)
         self.db.commit()
-        order_from_db= cur.fetchone()
+        order_from_db= str(cur.fetchone()[0]) 
         status = order_from_db
         order = dict(status=status)
             
@@ -101,7 +105,7 @@ class OrdersModel(object):
         data = (current_location, parcelId)
         cur.execute(query, data)
         self.db.commit()
-        order_from_db= cur.fetchone()
+        order_from_db= str(cur.fetchone()[0]) 
         current_location= order_from_db
         order = dict(current_location=current_location)
             
@@ -116,11 +120,13 @@ class OrdersModel(object):
         data = (destination, user_id, parcelId)
         cur.execute(query, data)
         self.db.commit()
-        order_from_db= cur.fetchone()
-        destination= order_from_db
-        order = dict(destination=destination)
+        order_from_db= str(cur.fetchone()[0]) 
+        if cur.rowcount == 1:
+            destination= order_from_db
+            order = dict(destination=destination)
+                
+            return order
+        return None
             
-        return order
-        
        
         

@@ -12,7 +12,7 @@ def my_app():
 orders = {"user_id":1, "pickup_location": "Nairobi",
           "destination": "Kisumu", "weight": 20, "price": 2000}
 users = {"username": "Rachel", "password": "root",
-         "phone": 712345123, "email": "rachel@gmail.com"}
+         "phone": 254412345123, "email": "rachellemaina@gmail.com"}
 
 
 class TestOrderViews(object):

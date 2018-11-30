@@ -11,12 +11,14 @@ class UsersModel(object):
 
 
     def serialize_user(self, user_from_db):
+        users = []
+        for i, all_users in enumerate(user_from_db):
+            user_id, username, phone, email, role, date_created = all_users
+            user = dict(user_id=user_id, username=username,
+                         phone=phone, email=email, role=role, date_created=date_created)
+            users.append(user)
 
-        user_id, username, password, phone, email, role, date_created = user_from_db
-        user = dict(user_id=user_id, username=username, password=password,
-                     phone=phone, email=email, role=role, date_created=date_created)
-
-        return user
+        return users
 
     @staticmethod
     def generate_hash(password):
@@ -27,20 +29,24 @@ class UsersModel(object):
         return sha256.verify(password, hash)
 
 
-    def login(self, username, password):
+    def login(self, user_username, user_password):
         """Method to login."""
 
 
         cur = self.db.cursor()
         cur.execute(
-            """SELECT user_id, username, password, phone, email, role, date_created
-            FROM users WHERE username = %s """, (username, ))
+            """SELECT user_id, username, password, phone, email, role
+            FROM users WHERE username = %s """, (user_username, ))
         user_from_db = cur.fetchone()
+
         if cur.rowcount == 1: 
-            resp = self.serialize_user(user_from_db)
-            if self.verify_hash(password, resp["password"]):  
+          
+            user_id, username, password, phone, email, role  = user_from_db
+            resp = dict(user_id=user_id, username=username, password=password, phone=phone, email=email, role=role)
             
+            if self.verify_hash(user_password, resp["password"]):            
                 return resp
+        return None
 
 
 
@@ -56,30 +62,32 @@ class UsersModel(object):
         self.db.commit()
        
 
-    def user_by_id(self, userId):
+    def user_by_id(self, user_id):
         """Method to fetch one user."""
 
         cur = self.db.cursor()
         cur.execute(
-            """SELECT user_id, username, password, phone, email, role, date_created 
-            FROM users WHERE user_id = %s""", (userId, ))
+            """SELECT user_id, username, password, phone, email, role
+            FROM users WHERE user_id = %s""", (user_id, ))
         
         user_from_db = cur.fetchone()
         if cur.rowcount == 1: 
-            resp = self.serialize_user(user_from_db)                     
+            user_id, username, password, phone, email, role  = user_from_db
+            resp = dict(user_id=user_id, username=username, password=password, phone=phone, email=email, role=role)
+                                
             return resp
         return None
 
-    def user_by_username(self, username):
+    def all_users(self):
         """Method to fetch one user."""
 
         cur = self.db.cursor()
         cur.execute(
-            """SELECT user_id, username, password, phone, email, role, date_created 
-            FROM users WHERE username = %s""", (username, ))
+            """SELECT user_id, username, phone, email, role, date_created 
+            FROM users""")
         
-        user_from_db = cur.fetchone()
-        if cur.rowcount == 1: 
+        user_from_db = cur.fetchall()
+        if cur.rowcount >= 1: 
             resp = self.serialize_user(user_from_db)                     
             return resp
         return None
