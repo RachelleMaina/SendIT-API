@@ -19,20 +19,22 @@ Postman, Linux Terminal
 
 ## Testing Endpoints
 
-Setup the database and create tables with the command `python migrations.py`
-Then set your environment command `FLASK_APP=run.py`
-Lastly Run flask with the command `flask run`
+- Setup the database and create tables with the command `python migrations.py`
+- Then set your environment command `FLASK_APP=run.py`
+- Lastly Run flask with the command `flask run`
 
    Test the following endpoints on Postman
   
 1. Signup:  POST:`http://rachel-sendit-api.herokuapp.com/api/v2/auth/signup`
    ```
-   payload: {"username": "Rachel", "password": "root", "phone": 254412345123, "email": "mainarachelle@gmail.com"}
-   _To get email notification, use an email address you can access_
+   - payload: {"username": "Rachel", "password": "root", "phone": 254412345123, "email": "mainarachelle@gmail.com"}
+   - To get email notification, use an email address you can access
    ```
    
 2. Login:   POST: `http://rachel-sendit-api.herokuapp.com/api/v2/auth/login`
-   ```payload: {"username": "Rachel", "password": "root"}```
+   ```
+   - payload: {"username": "Rachel", "password": "root"}
+   ```
    
    *To access the following endpoints, login with the credentials you used to signup.*
    e.g `payload: {"username": "Rachel", "password": "root"}`
