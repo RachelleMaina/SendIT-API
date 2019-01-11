@@ -2,6 +2,7 @@ from instance.config import Config
 from flask_jwt_extended import JWTManager
 from flask import Flask, Blueprint, make_response, jsonify
 from flask_mail import Mail
+from flask_cors import CORS
 from .api.v1 import version1_blueprint
 from .api.v2 import version2_blueprint
 
@@ -40,6 +41,7 @@ def create_app(config_class=Config):
     app.register_blueprint(version2_blueprint, url_prefix="/api/v2")
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, handle_server_error)
+    CORS(app)
 
     return app
 

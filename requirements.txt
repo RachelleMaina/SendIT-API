@@ -11,6 +11,7 @@ coverage==4.5.1
 coveralls==1.5.1
 docopt==0.6.2
 Flask==1.0.2
+Flask-Cors==3.0.7
 Flask-JWT-Extended==3.13.1
 Flask-Mail==0.9.1
 Flask-RESTful==0.3.6
@@ -33,6 +34,7 @@ pylint==2.1.1
 pytest==3.10.0
 pytz==2018.7
 requests==2.20.0
+requirements==0.1
 six==1.11.0
 typed-ast==1.1.0
 urllib3==1.24.1
