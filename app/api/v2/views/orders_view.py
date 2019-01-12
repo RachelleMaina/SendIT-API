@@ -1,7 +1,6 @@
 import re
 from flask_jwt_extended import (create_access_token,
                                 jwt_required, get_jwt_identity, get_raw_jwt, jwt_required)
-from flask_mail import Message
 from flask import request, make_response, jsonify, abort
 from flask_restful import Resource, reqparse
 from ..models.orders_model import OrdersModel
@@ -35,22 +34,22 @@ class CreateOrder(Resource, OrdersModel):
 
             if weight.isdigit() is False:
                 abort(make_response(
-                    jsonify(message="weight should be a number"), 400))
+                    jsonify(Message="weight should be a number"), 400))
 
             if not stripped_pickup_location:
                 abort(make_response(
-                    jsonify(message="pickup_location cannot be empty"), 400))
+                    jsonify(Message="Pickup Location cannot be empty"), 400))
             if not stripped_destination:
                 abort(make_response(
-                    jsonify(message="destination cannot be empty"), 400))
+                    jsonify(Message="Destination cannot be empty"), 400))
 
             if not re.match("^[a-zA-Z _-]*$", destination):
                 abort(make_response(
-                    jsonify(message="destination should have letters, spaces, _ and - only"), 400))
+                    jsonify(Message="Destination should have letters, spaces, _ and - only"), 400))
 
             if not re.match("^[a-zA-Z _-]*$", pickup_location):
                 abort(make_response(jsonify(
-                    message="pickup_location should have letters, spaces, _ and - only"), 400))
+                    Message="Pickup Location should have letters, spaces, _ and - only"), 400))
 
 
             order = self.create_order(user_id=int(user_id), pickup_location=pickup_location,
@@ -111,7 +110,7 @@ class ChangeStatus(Resource, OrdersModel):
             
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
-                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+                abort(make_response(jsonify(Message="parcel Id should be a number"), 400))
 
             if self.get_one_order(int(parcelId)) is None:
                 abort(make_response(jsonify({
@@ -169,7 +168,7 @@ class ChangeLocation(Resource, OrdersModel):
             current_location = data["current_location"]
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
-                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+                abort(make_response(jsonify(Message="parcelId should be a number"), 400))
 
             if self.get_one_order(int(parcelId)) is None:
                 abort(make_response(jsonify({
@@ -177,12 +176,9 @@ class ChangeLocation(Resource, OrdersModel):
 
                 }), 400))
 
-            email = users["email"]
-            message = Message("Your parcel is not at " + current_location, sender="mainarachell@gmail.com",
-                  recipients = [email])
 
             order = self.change_location(current_location, parcelId)
-            #self.mail.send(msg)
+            
             
             return make_response(jsonify(
                     {
@@ -211,7 +207,7 @@ class ChangeDestination(Resource, OrdersModel):
             destination = data["destination"]
             parcelId = str(parcelId)
             if parcelId.isdigit() == False:
-                abort(make_response(jsonify(message="parcelId should be a number"), 400))
+                abort(make_response(jsonify(Message="parcelId should be a number"), 400))
 
             if self.get_one_order(int(parcelId)) is None:
                 abort(make_response(jsonify({
