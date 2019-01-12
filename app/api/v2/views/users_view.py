@@ -63,19 +63,19 @@ class Register(Resource, UsersModel):
 
         if not stripped_username or not stripped_password or not stripped_phone or not stripped_email:
             abort(make_response(
-                jsonify(message="password, email, phone and email fields cannot be empty"), 400))
+                jsonify(Message="password, email, phone and email fields cannot be empty"), 400))
 
         if not re.match("^[0-9]*$", phone) or len(phone) != 12:
             abort(make_response(
-                jsonify(message="phone number should have 12 digits and of the format 254*********"), 400))
+                jsonify(Message="phone number should have 12 digits and of the format 254*********"), 400))
 
         if not re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
-            abort(make_response(jsonify(message="Email given is not valid"), 400))
+            abort(make_response(jsonify(Message="Email given is not valid"), 400))
 
 
         if not re.match("^[a-zA-Z _-]*$", username):
             abort(make_response(
-                jsonify(message="username should have letters, spaces, _ and - only"), 400))
+                jsonify(Message="username should have letters, spaces, _ and - only"), 400))
 
 
         try:
